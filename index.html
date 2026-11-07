@@ -1,25 +1,36 @@
+Aqui está o código completo com **suporte a mobile**:
+
+### O que foi adicionado:
+- Detecção automática de dispositivo touch
+- **Arrastar a tela** para mirar
+- **Botão FIRE** grande (canto inferior direito) para atirar / segurar no Tracking
+- **Botão de pausa** (canto superior esquerdo)
+- Impede zoom e scroll indesejado
+- Ajuste de sensibilidade de toque
+- UI adaptada (botões maiores, safe-area)
+
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Aim Range 3D</title>
 <style>
 :root{color-scheme:dark;--red:#ff4655;--navy:#0f1923;--ice:#ece8e1;--cy:#3dffe0}
-html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-family:system-ui,sans-serif;color:var(--ice)}
-canvas{display:block;width:100%;height:100%}
-#cross{position:fixed;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none}
+html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-family:system-ui,sans-serif;color:var(--ice);touch-action:none;-webkit-user-select:none;user-select:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#cross{position:fixed;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none;z-index:5}
 
 #xprev{width:96px;height:96px;background:#1b2733;flex:none}.xrow{display:flex;gap:12px;align-items:center}.xc{flex:1}.xc label{margin:6px 0;font-size:12px;justify-content:space-between}.xc select,.xc input[type=color]{width:96px}.xc input[type=range]{width:96px;flex:none}summary{cursor:pointer;color:var(--red);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-top:14px}
-#hud{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:center;gap:34px;font-weight:800;letter-spacing:.08em;text-shadow:0 0 6px #000;pointer-events:none;text-transform:uppercase}
+#hud{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:center;gap:34px;font-weight:800;letter-spacing:.08em;text-shadow:0 0 6px #000;pointer-events:none;text-transform:uppercase;z-index:5}
 #hud div{text-align:center;font-size:12px;opacity:.9}#hud b{display:block;font-size:30px;color:#fff}
 #hud .t b{color:var(--red)}
-#ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(#0f1923cc,#05080cf2)}
+#ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(#0f1923cc,#05080cf2);z-index:20}
 .card{width:min(460px,92vw);max-height:94vh;overflow:auto;padding:28px;background:#0f1923;border:1px solid #ff465566;box-shadow:0 0 40px #ff465533;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px))}
 h1{margin:0 0 4px;font-size:34px;letter-spacing:.12em;color:var(--red)}
 .sub{margin:0 0 16px;opacity:.75;line-height:1.5;font-size:14px}
-button{display:block;width:100%;margin:8px 0;padding:13px;background:var(--red);color:#fff;border:0;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+button{display:block;width:100%;margin:8px 0;padding:13px;background:var(--red);color:#fff;border:0;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));-webkit-tap-highlight-color:transparent}
 button:hover{background:#ff6672}button small{display:block;font-weight:400;letter-spacing:0;text-transform:none;opacity:.85;margin-top:2px}
 button.alt{background:#1f2b38;border:1px solid #ff465588}
 label{display:flex;align-items:center;gap:10px;margin:16px 0 4px;font-size:13px}
@@ -27,11 +38,45 @@ input[type=range]{flex:1;accent-color:var(--red)}
 .res{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px;margin:10px 0 14px;text-align:center}
 .res div{background:#1b2733;padding:10px 4px;font-size:11px;text-transform:uppercase;opacity:.95}.res b{display:block;font-size:24px;color:var(--red)}
 .note{font-size:11px;opacity:.55;margin-top:10px}
+
+/* Mobile controls */
+#fireBtn,#pauseBtn{display:none;z-index:15;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+#fireBtn{
+  position:fixed;
+  right:max(18px,env(safe-area-inset-right));
+  bottom:max(28px,env(safe-area-inset-bottom));
+  width:92px;height:92px;border-radius:50%;
+  background:rgba(255,70,85,.82);border:3px solid #fff;
+  color:#fff;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  align-items:center;justify-content:center;
+  box-shadow:0 0 24px #ff465566;
+}
+#fireBtn.active{background:#ff4655;transform:scale(.93)}
+#pauseBtn{
+  position:fixed;
+  top:calc(10px + env(safe-area-inset-top));
+  left:max(12px,env(safe-area-inset-left));
+  width:46px;height:46px;border-radius:10px;
+  background:rgba(15,25,35,.9);border:1px solid #ff465566;
+  color:#fff;font-size:18px;font-weight:700;
+  align-items:center;justify-content:center;
+}
+body.mobile.playing #fireBtn,
+body.mobile.playing #pauseBtn{display:flex}
+
+body.mobile #hud{gap:18px}
+body.mobile #hud b{font-size:24px}
+body.mobile .card{padding:22px 18px}
+body.mobile button{padding:15px 12px;font-size:15px}
 </style>
 </head>
 <body>
 <svg id="cross" viewBox="-48 -48 96 96" shape-rendering="crispEdges"></svg>
 <div id="hud"><div>Pontos<b id="sc">0</b></div><div class="t">Tempo<b id="tm">60</b></div><div>Precisão<b id="ac">–</b></div><div id="hsw" style="display:none">HS<b id="hs">–</b></div></div>
+
+<button id="fireBtn">FIRE</button>
+<button id="pauseBtn">❚❚</button>
+
 <div id="ov"><div class="card">
 <h1>AIM RANGE</h1><p class="sub" id="sub">Treino de mira em 3D. Sensibilidade na mesma conversão do VALORANT (0,07° por contagem).</p>
 <div id="res"></div>
@@ -39,7 +84,7 @@ input[type=range]{flex:1;accent-color:var(--red)}
 <button data-m="flick">Flick<small>1 alvo pequeno, longe e em profundidade</small></button>
 <button data-m="track">Tracking<small>Segure o botão esquerdo no alvo em movimento</small></button>
 <button data-m="head">Headshot<small>Bonecos com ~1,8 m (altura de um agente) em strafe</small></button>
-<button data-m="prec">Precisão<small>Bolas do tamanho de uma cabeça (~26 cm) · acertar o centro vale mais</small></button>
+<button data-m="prec">Precisão<small>Bolas do tamanho de uma cabeça · acertar o centro vale mais</small></button>
 <button class="alt" id="cont" style="display:none">Continuar</button>
 <details open><summary>Arma e cenário</summary><div class="xc" style="margin-top:6px">
 <label>Cenário <select id="ssc" style="width:170px"></select></label>
@@ -61,11 +106,14 @@ input[type=range]{flex:1;accent-color:var(--red)}
 <label><span>Contorno preto</span><input type="checkbox" id="xo"></label>
 </div></div><button class="alt" id="xr" style="padding:7px;font-size:11px">Restaurar mira padrão</button></details>
 <label>Sens <input type="range" id="sens" min=".1" max="2" step=".05"><b id="sv"></b></label>
-<p class="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma. O melhor resultado de cada modo fica salvo neste navegador.</p>
+<p class="note" id="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma. O melhor resultado de cada modo fica salvo neste navegador.</p>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),R=(a,b)=>a+Math.random()*(b-a);
+const isMobile = matchMedia('(pointer:coarse)').matches || ('ontouchstart' in window) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+if(isMobile) document.body.classList.add('mobile');
+
 const ren=new THREE.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(ren.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b1219);scene.fog=new THREE.Fog(0x0b1219,22,50);
 const cam=new THREE.PerspectiveCamera(72,1,.05,100);cam.position.set(0,1.7,0);
@@ -216,7 +264,7 @@ function animGun(dt,now){
  gun.position.set(W.o[0]+GA.sx,W.o[1]+bob+GA.sy+oy,W.o[2]+r*.07*W.k);gun.rotation.set(rx,0,rz);if(mag)mag.position.y=mag.userData.y0+mg;
  GA.flash-=dt;flash.visible=GA.flash>0;mLight.intensity=GA.flash>0?2.5:0;
 }
-// bonecos (altura ~1,8 m: pernas .88 + tronco .63 + cabeça até ~1,79)
+// bonecos (altura ~1,8 m base, escalados 1.25x)
 const dummies=[],hbox=[];
 function mkDummy(){
  const g=new THREE.Group();
@@ -228,7 +276,7 @@ function mkDummy(){
  add(new THREE.BoxGeometry(.1,.1,.1),0xd9b08c,0,1.57,0,'body');
  add(new THREE.SphereGeometry(.13,20,16),0xd9b08c,0,1.66,0,'head');add(new THREE.BoxGeometry(.19,.05,.05),0x0f1923,0,1.68,.115,'head');
  g.userData={legs,arms,hp:100,vx:0,ch:0,age:0};
- g.scale.setScalar(1.25); // aumentado
+ g.scale.setScalar(1.25);
  scene.add(g);dummies.push(g);return g;
 }
 function placeDummy(g){
@@ -248,7 +296,9 @@ function updExtra(dt,now,play){
  if(curSk.rb){GM.a.color.setHSL(now/3000%1,.9,.6);GM.a.emissive.copy(GM.a.color)}
  if(play&&G.mode=='prec')for(const t of targets)if(performance.now()-t.userData.born>3500)place(t);
  for(const g of dummies){
-  const u=g.userData;u.age+=dt;g.scale.y=Math.min(1,u.age/.15+.05)*1.25; // mantém escala
+  const u=g.userData;u.age+=dt;
+  const grow=Math.min(1,u.age/.15+.05);
+  g.scale.set(1.25*grow,1.25*grow,1.25*grow);
   if(play){u.ch-=dt;if(u.ch<=0){u.ch=R(.5,1.6);u.vx=Math.random()<.25?0:(Math.random()<.5?-1:1)*R(2.5,4)}
    g.position.x+=u.vx*dt;if(Math.abs(g.position.x)>11){g.position.x=Math.sign(g.position.x)*11;u.vx*=-1}}
   const w=u.vx&&play?Math.sin(now/110)*.5:0;
@@ -293,6 +343,20 @@ $('xr').onclick=()=>{X={...XD};syncX()};
 syncX();
 const NM={grid:'Gridshot',flick:'Flick',track:'Tracking',head:'Headshot',prec:'Precisão'};
 function best(m,s){let b=0;try{b=+localStorage.getItem('arBest'+m)||0;if(s!=null&&s>b){b=s;localStorage.setItem('arBest'+m,b)}}catch(e){}return b}
+
+function enterPlay(){
+  locked=true;
+  G.state='play';
+  $('ov').style.display='none';
+  document.body.classList.add('playing');
+}
+function exitPlay(){
+  locked=false;
+  document.body.classList.remove('playing');
+  mouseDown=false;
+  $('fireBtn').classList.remove('active');
+}
+
 function start(m){
  targets.splice(0).forEach(t=>scene.remove(t));dummies.splice(0).forEach(d=>scene.remove(d));hbox.length=0;
  const tt = (S.t === 'inf') ? Infinity : (+S.t || 60);
@@ -300,12 +364,19 @@ function start(m){
  if(m=='grid')for(let i=0;i<3;i++)place(mkTarget(.55));
  else if(m=='flick')place(mkTarget(.3));
  else if(m=='head'){for(let i=0;i<2;i++)placeDummy(mkDummy())}
- else if(m=='prec'){for(let i=0;i<3;i++){const t=mkTarget(.16);t.material.emissiveIntensity=.7;place(t)}} // aumentado de .13 para .16
+ else if(m=='prec'){for(let i=0;i<3;i++){const t=mkTarget(.16);t.material.emissiveIntensity=.7;place(t)}}
  else{const t=mkTarget(.6);t.position.set(0,4,-20);t.userData.age=1}
- $('res').innerHTML='';ren.domElement.requestPointerLock();
+ $('res').innerHTML='';
+ if(isMobile){
+   enterPlay();
+ }else{
+   ren.domElement.requestPointerLock();
+ }
 }
 function finish(){
- G.state='done';document.exitPointerLock();
+ G.state='done';
+ exitPlay();
+ if(!isMobile) document.exitPointerLock();
  const acc=G.mode=='track'?G.onT/Math.max(G.tot,.01):G.hits/Math.max(G.shots,1),b=best(G.mode,G.score);
  $('sub').textContent=NM[G.mode]+' concluído. Escolha um modo para jogar de novo.';
  $('res').innerHTML=`<div class="res"><div><b>${G.score}</b>Pontos</div><div><b>${(acc*100).toFixed(0)}%</b>Precisão</div><div><b>${b}</b>Recorde</div>${G.mode=='head'?`<div><b>${G.kills}</b>Abates</div><div><b>${G.hits?Math.round(G.hh/G.hits*100):0}%</b>HS</div>`:G.mode=='prec'?`<div><b>${G.hits?Math.round(G.cs/G.hits*100):0}%</b>Centro</div>`:''}</div>`+
@@ -313,16 +384,122 @@ function finish(){
  $('cont').style.display='none';$('ov').style.display='flex';
 }
 document.querySelectorAll('button[data-m]').forEach(b=>b.onclick=()=>start(b.dataset.m));
-$('cont').onclick=()=>{G.state='play';ren.domElement.requestPointerLock()};
+$('cont').onclick=()=>{
+  if(isMobile) enterPlay();
+  else ren.domElement.requestPointerLock();
+};
+
 let locked=false,mouseDown=false,yaw=0,pitch=0;
+
+// Desktop pointer lock
 document.addEventListener('pointerlockchange',()=>{
+ if(isMobile) return;
  locked=document.pointerLockElement===ren.domElement;
- if(locked)$('ov').style.display='none';
- else if(G.state=='play'){G.state='paused';$('sub').textContent='Pausado.';$('cont').style.display='block';$('ov').style.display='flex'}
- else $('ov').style.display='flex';
+ if(locked){
+   $('ov').style.display='none';
+   document.body.classList.add('playing');
+ }else if(G.state=='play'){
+   G.state='paused';
+   document.body.classList.remove('playing');
+   $('sub').textContent='Pausado.';
+   $('cont').style.display='block';
+   $('ov').style.display='flex';
+ }else{
+   document.body.classList.remove('playing');
+   $('ov').style.display='flex';
+ }
 });
-addEventListener('mousemove',e=>{if(!locked)return;GA.mdx+=e.movementX;GA.mdy+=e.movementY;const k=sens*.07*Math.PI/180;yaw-=e.movementX*k;pitch=Math.max(-1.5,Math.min(1.5,pitch-e.movementY*k))});
+
+// Desktop mouse look
+addEventListener('mousemove',e=>{
+ if(!locked||isMobile)return;
+ GA.mdx+=e.movementX;GA.mdy+=e.movementY;
+ const k=sens*.07*Math.PI/180;
+ yaw-=e.movementX*k;
+ pitch=Math.max(-1.5,Math.min(1.5,pitch-e.movementY*k));
+});
 addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false});
+
+// Mobile touch look
+let lastTX=0,lastTY=0,lookTouchId=null;
+ren.domElement.addEventListener('touchstart',e=>{
+  if(G.state!=='play'||!isMobile) return;
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    // ignora se for no botão fire (ele tem seu próprio handler)
+    if(lookTouchId===null){
+      lookTouchId=t.identifier;
+      lastTX=t.clientX; lastTY=t.clientY;
+    }
+  }
+},{passive:false});
+
+ren.domElement.addEventListener('touchmove',e=>{
+  if(G.state!=='play'||!isMobile||lookTouchId===null) return;
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    if(t.identifier===lookTouchId){
+      const dx=t.clientX-lastTX, dy=t.clientY-lastTY;
+      lastTX=t.clientX; lastTY=t.clientY;
+      const k=sens*.07*Math.PI/180*2.2; // multiplicador extra para toque
+      yaw-=dx*k;
+      pitch=Math.max(-1.5,Math.min(1.5,pitch-dy*k));
+      GA.mdx+=dx; GA.mdy+=dy;
+    }
+  }
+},{passive:false});
+
+ren.domElement.addEventListener('touchend',e=>{
+  for(const t of e.changedTouches){
+    if(t.identifier===lookTouchId) lookTouchId=null;
+  }
+});
+ren.domElement.addEventListener('touchcancel',e=>{
+  for(const t of e.changedTouches){
+    if(t.identifier===lookTouchId) lookTouchId=null;
+  }
+});
+
+// Fire button (mobile + também funciona no desktop se quiser)
+const fireBtn=$('fireBtn');
+function setFire(down){
+  mouseDown=down;
+  fireBtn.classList.toggle('active',down);
+  if(down && G.state==='play' && G.mode!=='track' && G.cd<=0 && GA.rel<0){
+    shoot();
+    G.cd=.1;
+  }
+}
+['touchstart','mousedown'].forEach(ev=>{
+  fireBtn.addEventListener(ev,e=>{
+    e.preventDefault(); e.stopPropagation();
+    setFire(true);
+  },{passive:false});
+});
+['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>{
+  fireBtn.addEventListener(ev,e=>{
+    e.preventDefault();
+    setFire(false);
+  });
+});
+
+// Pause button (mobile)
+$('pauseBtn').addEventListener('click',()=>{
+  if(G.state!=='play') return;
+  G.state='paused';
+  exitPlay();
+  $('sub').textContent='Pausado.';
+  $('cont').style.display='block';
+  $('ov').style.display='flex';
+});
+
+// Desktop shoot
+addEventListener('mousedown',e=>{
+ if(isMobile||!locked||G.state!='play'||e.button!=0)return;
+ mouseDown=true;
+ if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=.1}
+});
+
 const rc=new THREE.Raycaster(),c0=new THREE.Vector2(0,0);
 function shoot(){
  G.shots++;rc.setFromCamera(c0,cam);if(G.mode=='head')return shootHead();
@@ -343,10 +520,13 @@ function shoot(){
   }
  }
 }
-addEventListener('mousedown',e=>{
- if(!locked||G.state!='play'||e.button!=0)return;mouseDown=true;
- if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=.1}
-});
+
+// Atualiza texto de ajuda
+if(isMobile){
+  $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE para atirar (segure no Tracking) · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador.';
+  $('sub').textContent='Treino de mira em 3D. Arraste a tela para mirar e use o botão FIRE.';
+}
+
 // loop
 let last=performance.now();
 function loop(now){
@@ -363,7 +543,8 @@ function loop(now){
    if(Math.abs(t.position.x)>9){t.position.x=Math.sign(t.position.x)*9;u.v.x*=-1}
    if(t.position.y<1.3||t.position.y>7.5){t.position.y=Math.max(1.3,Math.min(7.5,t.position.y));u.v.y*=-1}
    G.tot+=dt;rc.setFromCamera(c0,cam);
-   const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
+   const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;
+   if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
    if(on){G.onT+=dt;G.score=Math.round(G.onT*100)}
    t.material.emissiveIntensity=on?1:.3;
   }
@@ -385,3 +566,14 @@ requestAnimationFrame(loop);
 </body>
 </html>
 ```
+
+### Resumo do suporte mobile:
+| Controle | Como funciona |
+|---------|----------------|
+| **Mirar** | Arraste o dedo na tela |
+| **Atirar** | Botão vermelho **FIRE** (canto inferior direito) |
+| **Tracking** | Segure o botão FIRE |
+| **Pausar** | Botão **❚❚** (canto superior esquerdo) |
+| **Continuar** | Botão Continuar no menu |
+
+O código detecta automaticamente se é mobile e ativa os controles de toque. No desktop continua funcionando normalmente com mouse + pointer lock.
