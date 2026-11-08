@@ -178,7 +178,7 @@ addEventListener('keyup',e=>{keys[e.code]=false});
 addEventListener('blur',clearInput);
 function axis(v,inp,dt){
  const tg=inp*MAXV*(keys.ShiftLeft?.5:1);
- const a=inp===0?38:(v*inp<0?140:52);
+ const a=inp===0?38:(v*inp<0?140:52); // 140 = contra-strafe (tecla oposta para quase na hora)
  const d=tg-v;return v+Math.sign(d)*Math.min(Math.abs(d),a*dt);
 }
 function movePlayer(dt){
@@ -197,45 +197,62 @@ function movePlayer(dt){
    - Sniper scoped = 0° FSA
 */
 const SPREAD = {
+  // bloom atual por arma (0 = first shot)
   bloom: 0,
   lastShot: 0,
+  // recovery rate (°/s) — quanto o bloom cai por segundo sem atirar
   recovery: 8.5
 };
 
 function getMovementPenalty() {
+  // Velocidade normalizada 0..1 (THR = deadzone Valorant ~0.22-0.275)
   const sp = Math.hypot(PL.vx, PL.vz) / MAXV;
-  if (sp <= THR) return 0;
-  if (keys.ShiftLeft || keys.ShiftRight) {
+  if (sp <= THR) return 0;                    // parado / deadzone
+  if (keys.ShiftLeft || keys.ShiftRight) {    // andando (Shift)
+    // walk ~ +2.5° a +3.5° (rifles)
     return 2.8 * Math.min(1, (sp - THR) / (0.6 - THR));
   }
+  // correndo: ~ +5° a +6.5° dependendo da arma
   return 5.8 * Math.min(1, (sp - THR) / (1 - THR));
 }
 
 function getWeaponSpread() {
+  // Retorna o spread total em graus para o próximo tiro
   const w = W;
-  let base = w.fsa;
-  if (w.scope && scoped) base = 0;
+  let base = w.fsa;                           // first shot accuracy
+  if (w.scope && scoped) base = 0;            // Operator/Marshal scoped = 0°
+
+  // Bloom de spray (aumenta com tiros consecutivos)
   const bloom = SPREAD.bloom;
+
+  // Penalidade de movimento
   const movePen = getMovementPenalty();
+
+  // Total (Valorant soma additive)
   return Math.max(0, base + bloom + movePen);
 }
 
 function applySpreadToRay(deg) {
-  if (deg <= 0.001) {
-    rc.ray.direction.set(0, 0, -1).applyQuaternion(cam.quaternion).normalize();
-    return;
-  }
+  // Sempre define origem + direção base a partir da câmera
+  rc.setFromCamera(c0, cam);
+  if (deg <= 0.001) return;
+  // Distribuição uniforme no cone (quase uniforme após v6.11)
   const ang = deg * Math.PI / 180;
   const r = Math.sqrt(Math.random()) * ang;
   const th = Math.random() * Math.PI * 2;
-  rc.ray.direction.set(0, 0, -1)
-    .applyEuler(new THREE.Euler(Math.sin(th) * r, Math.cos(th) * r, 0))
-    .applyQuaternion(cam.quaternion)
-    .normalize();
+  // Desvia a direção já apontada pela câmera
+  const dir = rc.ray.direction;
+  const right = new THREE.Vector3().crossVectors(dir, cam.up).normalize();
+  const up = new THREE.Vector3().crossVectors(right, dir).normalize();
+  dir.addScaledVector(right, Math.cos(th) * Math.sin(r));
+  dir.addScaledVector(up, Math.sin(th) * Math.sin(r));
+  dir.normalize();
 }
 
 function onShotFired() {
+  // Aumenta bloom após cada tiro (Valorant: sobe rápido nos primeiros tiros)
   const w = W;
+  // Incremento por tiro (aprox. valores reais)
   const inc = w.bloomInc || 0.35;
   const maxB = w.maxBloom || 4.5;
   SPREAD.bloom = Math.min(maxB, SPREAD.bloom + inc);
@@ -243,11 +260,13 @@ function onShotFired() {
 }
 
 function updateBloom(dt) {
-  if (performance.now() - SPREAD.lastShot > 80) {
+  // Recovery quando não está atirando
+  if (performance.now() - SPREAD.lastShot > 80) { // pequeno delay antes de começar a recuperar
     SPREAD.bloom = Math.max(0, SPREAD.bloom - SPREAD.recovery * dt);
   }
 }
 
+// Função antiga de spread (mantida para compatibilidade visual no ADAD)
 function spreadRay(sp){
   const ang=Math.min(1,(sp-THR)/(1-THR))*3.2*Math.PI/180,r=Math.sqrt(Math.random())*ang,th=Math.random()*6.283;
   rc.ray.direction.set(0,0,-1).applyEuler(new THREE.Euler(Math.sin(th)*r,Math.cos(th)*r,0)).applyQuaternion(cam.quaternion).normalize();
@@ -278,7 +297,7 @@ function burst(p,n=16){
   m.position.copy(p);m.userData={v:new THREE.Vector3(R(-1,1),R(-.5,1),R(-1,1)).multiplyScalar(6),life:.5};scene.add(m);parts.push(m);
  }
 }
-// arma animada
+// arma animada (viewmodel preso à câmera)
 scene.add(cam);
 const gun=new THREE.Group(),GA={r:0,flash:0,rel:-1,sx:0,sy:0,mdx:0,mdy:0};
 const GM={};['b','d','k','a','s'].forEach(r=>GM[r]=new THREE.MeshStandardMaterial({metalness:.6,roughness:.35}));
@@ -292,8 +311,11 @@ const flash=new THREE.Mesh(new THREE.CircleGeometry(.09,10),new THREE.MeshBasicM
 flash.position.set(0,.005,-.68);flash.visible=false;gun.add(flash);
 const mLight=new THREE.PointLight(0xffc070,0,8);mLight.position.set(0,0,-.75);gun.add(mLight);
 gun.position.set(.2,-.2,-.42);cam.add(gun);
-
-// armas com valores de dispersão do Valorant
+// armas, skins e cenários
+// auto = disparo automático · cd = intervalo entre tiros (s) · scope = tem luneta
+// fsa = First Shot Accuracy em graus (Valorant)
+// bloomInc = quanto o bloom sobe por tiro
+// maxBloom = teto do bloom de spray
 const WP={
  rifle:{n:'Fuzil · automático (Vandal)',auto:true,cd:.1026,mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,
   fsa:0.25, bloomInc:0.38, maxBloom:4.8,
@@ -305,7 +327,7 @@ const WP={
   fsa:0.25, bloomInc:0.55, maxBloom:3.5,
   p:[[.05,.055,.26,'b',0,.02,-.12],[.045,.035,.24,'d',0,-.02,-.1],[.02,.02,.05,'k',0,.02,-.27],[.045,.12,.06,'d',0,-.08,.02,.2],[.015,.02,.02,'k',0,.055,-.22],[.052,.01,.18,'a',0,.04,-.12],[.07,.07,.3,'s',0,-.1,.25,.15],[.035,.03,.05,'d',0,-.15,.03,.2,1]]},
  sniper:{n:'Sniper · mira (Operator)',auto:false,cd:1.67,scope:true,mz:-1.03,o:[.2,-.2,-.4],k:1.8,fl:1.4,
-  fsa:5.0, bloomInc:0, maxBloom:0,
+  fsa:5.0, bloomInc:0, maxBloom:0,   // hipfire 5°, scoped = 0°
   p:[[.06,.08,.5,'b',0,0,-.05],[.026,.026,.6,'k',0,.01,-.62],[.04,.04,.1,'d',0,.01,-.97],[.055,.1,.34,'b',0,-.02,.33],[.05,.13,.06,'d',0,-.1,.12,.25],[.045,.045,.28,'k',0,.085,-.08],[.06,.06,.06,'k',0,.085,-.24],[.055,.055,.05,'k',0,.085,.07],[.04,.04,.01,'a',0,.085,-.275],[.062,.012,.3,'a',0,.02,-.05],[.075,.075,.36,'s',0,-.1,.34,.15],[.04,.1,.07,'d',0,-.08,-.02,-.05,1]]},
  smg:{n:'Submetralhadora · automática (Spectre)',auto:true,cd:.075,mz:-.5,o:[.19,-.2,-.4],k:.8,fl:.9,
   fsa:0.40, bloomInc:0.28, maxBloom:5.5,
@@ -345,7 +367,7 @@ function setWeapon(id){
  W.p.forEach(p=>{const o=gpart(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]||0);if(p[8])mag=o});
  flash.position.set(0,.005,W.mz);mLight.position.set(0,0,W.mz-.07);flash.scale.setScalar(W.fl);
  scoped=false;document.body.classList.toggle('sniper',!!W.scope);$('scBtn').classList.remove('on');
- SPREAD.bloom=0;
+ SPREAD.bloom=0; // reseta bloom ao trocar de arma
 }
 function applySkin(id){
  curSk=SK[id]||SK.padrao;
@@ -360,6 +382,7 @@ function fillSel(id,obj,key,fn){
 }
 setScn(S.c);setWeapon(S.w);applySkin(S.k);
 fillSel('ssc',SCN,'c',setScn);fillSel('swp',WP,'w',setWeapon);fillSel('ssk',SK,'k',applySkin);
+// Tempo
 (function(){
   const e=$('stime');
   e.value=S.t||'60';
@@ -388,11 +411,12 @@ function animGun(dt,now){
  gun.position.set(W.o[0]+GA.sx,W.o[1]+bob+GA.sy+oy,W.o[2]+r*.07*W.k);gun.rotation.set(rx,0,rz);if(mag)mag.position.y=mag.userData.y0+mg;
  GA.flash-=dt;flash.visible=GA.flash>0;mLight.intensity=GA.flash>0?2.5:0;
 }
+// feedback pós-rodada
 const MV={x:0,y:0,t:0};
 function trackMv(e){const n=performance.now(),k=Math.exp(-(n-MV.t)/80);MV.x=MV.x*k+e.movementX;MV.y=MV.y*k+e.movementY;MV.t=n}
 function offs(p){const v=p.clone().sub(cam.position).applyQuaternion(cam.quaternion.clone().invert());return[Math.atan2(v.x,-v.z)*57.3,Math.atan2(v.y,-v.z)*57.3]}
 function logMiss(){
- if(G.curMoving)return;
+ if(G.curMoving)return; // tiro em movimento tem desvio aleatório: não entra na análise de sens
  const pts=isDum()?dummies.map(d=>new THREE.Vector3(d.position.x,1.66*d.scale.y,d.position.z)):targets.map(t=>t.position);
  let best=null,bd=1e9;
  for(const p of pts){const o=offs(p),a=Math.hypot(o[0],o[1]);if(a<bd){bd=a;best=o}}
@@ -470,6 +494,7 @@ function pauseFeedback(){
   $('res').innerHTML=coach(acc);
  }
 }
+// bonecos (altura ~1,8 m base, escalados 1.25x)
 const dummies=[],hbox=[];
 function mkDummy(){
  const g=new THREE.Group();
@@ -525,10 +550,13 @@ function updExtra(dt,now,play){
  }else $('cross').style.transform='';
 }
 let ac;function beep(f,d,type,v){ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+// fluxo
 let sens=.4;try{sens=+localStorage.getItem('arSens')||.4}catch(e){}
 $('sens').value=sens;$('sv').textContent=sens.toFixed(2);
 $('sens').oninput=e=>{sens=+e.target.value;$('sv').textContent=sens.toFixed(2);try{localStorage.setItem('arSens',sens)}catch(e){}};
+// com a luneta, a sens diminui na proporção do zoom (mesmo movimento angular por contagem do mouse)
 const zoomK=()=>Math.tan(cam.fov*Math.PI/360)/Math.tan(BASEFOV*Math.PI/360);
+// mira personalizável
 const XD={s:'cross',c:'#3dffe0',t:2,l:6,g:5,o:true};
 let X={...XD};try{X={...X,...JSON.parse(localStorage.getItem('arX')||'{}')}}catch(e){}
 function drawX(svg){
@@ -574,7 +602,7 @@ function start(m){
  const tt = (S.t === 'inf') ? Infinity : (+S.t || 60);
  Object.assign(G,{state:'play',mode:m,t:tt,score:0,shots:0,hits:0,onT:0,tot:0,rt:[],hh:0,bh:0,kills:0,cs:0,ov:0,un:0,mn:0,my:0,tl:0,td:0,el:0,ms:0,mh:0,ss:0,sh:0,curMoving:false});
  PP.x=0;PP.z=0;PL.vx=0;PL.vz=0;
- SPREAD.bloom=0;
+ SPREAD.bloom=0; // reseta bloom ao iniciar rodada
  document.body.classList.toggle('moving',isAd());
  if(m=='grid')for(let i=0;i<3;i++)place(mkTarget(.55));
  else if(m=='flick')place(mkTarget(.3));
@@ -607,6 +635,7 @@ $('cont').onclick=()=>{
 
 let locked=false,mouseDown=false,yaw=0,pitch=0;
 
+// Desktop pointer lock
 document.addEventListener('pointerlockchange',()=>{
  if(isMobile) return;
  locked=document.pointerLockElement===ren.domElement;
@@ -629,6 +658,7 @@ document.addEventListener('pointerlockchange',()=>{
  }
 });
 
+// Desktop mouse look
 addEventListener('mousemove',e=>{
  if(!locked||isMobile)return;
  GA.mdx+=e.movementX;GA.mdy+=e.movementY;trackMv(e);
@@ -639,6 +669,7 @@ addEventListener('mousemove',e=>{
 addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false;if(e.button==2)scoped=false});
 addEventListener('contextmenu',e=>e.preventDefault());
 
+// Mobile touch look
 let lastTX=0,lastTY=0,lookTouchId=null;
 ren.domElement.addEventListener('touchstart',e=>{
   if(G.state!=='play'||!isMobile) return;
@@ -658,7 +689,7 @@ ren.domElement.addEventListener('touchmove',e=>{
     if(t.identifier===lookTouchId){
       const dx=t.clientX-lastTX, dy=t.clientY-lastTY;
       lastTX=t.clientX; lastTY=t.clientY;
-      const k=sens*.07*Math.PI/180*2.2*zoomK();
+      const k=sens*.07*Math.PI/180*2.2*zoomK(); // multiplicador extra para toque
       yaw-=dx*k;
       pitch=Math.max(-1.5,Math.min(1.5,pitch-dy*k));
       GA.mdx+=dx; GA.mdy+=dy; trackMv({movementX:dx,movementY:dy});
@@ -677,6 +708,7 @@ ren.domElement.addEventListener('touchcancel',e=>{
   }
 });
 
+// Fire button (mobile + também funciona no desktop se quiser)
 const fireBtn=$('fireBtn');
 function setFire(down){
   mouseDown=down;
@@ -699,12 +731,14 @@ function setFire(down){
   });
 });
 
+// Botão de luneta (mobile, só com a sniper)
 $('scBtn').addEventListener('click',e=>{
   e.stopPropagation();
   if(G.state!=='play'||!W.scope)return;
   scoped=!scoped;$('scBtn').classList.toggle('on',scoped);
 });
 
+// Pause button (mobile)
 $('pauseBtn').addEventListener('click',()=>{
   if(G.state!=='play') return;
   G.state='paused';
@@ -714,6 +748,7 @@ $('pauseBtn').addEventListener('click',()=>{
   $('ov').style.display='flex';
 });
 
+// Desktop: botão esquerdo atira · botão direito mira (sniper)
 addEventListener('mousedown',e=>{
  if(isMobile||!locked||G.state!='play')return;
  if(e.button==2){if(W.scope)scoped=true;return}
@@ -727,8 +762,8 @@ function shoot(){
  G.shots++;
  // ===== DISPERSÃO VALORANT =====
  const totalSpread = getWeaponSpread();
- applySpreadToRay(totalSpread);
- onShotFired();
+ applySpreadToRay(totalSpread); // setFromCamera + desvio angular
+ onShotFired(); // aumenta bloom
 
  G.curMoving=false;
  if(isAd()){
@@ -746,30 +781,35 @@ function shoot(){
   place(t);
  }else{
   beep(130,.06,'square',.07);
-  const w=rc.intersectObjects(walls,false)[0];fire(w?w.point:rc.ray.at(60,new THREE.Vector3()));logMiss();
-  if(w){
+  const wHit=rc.intersectObjects(walls,false)[0];
+  fire(wHit?wHit.point:rc.ray.at(60,new THREE.Vector3()));
+  logMiss();
+  if(wHit){
    const m=new THREE.Mesh(new THREE.CircleGeometry(.09,12),new THREE.MeshBasicMaterial({color:0x04070a}));
-   const n=w.face.normal.clone().transformDirection(w.object.matrixWorld);
-   m.position.copy(w.point).addScaledVector(n,.012);m.lookAt(w.point.clone().add(n));scene.add(m);marks.push(m);
+   const n=wHit.face.normal.clone().transformDirection(wHit.object.matrixWorld);
+   m.position.copy(wHit.point).addScaledVector(n,.012);m.lookAt(wHit.point.clone().add(n));scene.add(m);marks.push(m);
    if(marks.length>40)scene.remove(marks.shift());
   }
  }
 }
 
+// Atualiza texto de ajuda
 if(isMobile){
   $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE atira (segure para rajada no fuzil e na submetralhadora) · 🔭 liga a luneta da sniper · Botões ◀ ▶ andam nos modos ADAD · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador. Dispersão de balas idêntica ao Valorant.';
   $('sub').textContent='Treino de mira em 3D. Arraste a tela para mirar e use o botão FIRE. Dispersão Valorant ativa.';
 }
 
+// loop
 let last=performance.now();
 function loop(now){
  requestAnimationFrame(loop);
  const dt=Math.min((now-last)/1000,.05);last=now;G.cd-=dt;
- updateBloom(dt);
+ updateBloom(dt); // recupera bloom de spray
  const play=locked&&G.state=='play';
  if(play&&isAd())movePlayer(dt);
  cam.position.set(PP.x,1.7,PP.z);
  cam.rotation.set(pitch,yaw,0,'YXZ');
+ // zoom da luneta (sniper)
  const tf=(scoped&&W.scope&&play)?SCOPEFOV:BASEFOV;
  if(Math.abs(cam.fov-tf)>.05){cam.fov+=(tf-cam.fov)*Math.min(1,dt*16);cam.updateProjectionMatrix()}
  const sa=Math.max(0,Math.min(1,(BASEFOV-cam.fov)/(BASEFOV-SCOPEFOV)));
@@ -779,6 +819,7 @@ function loop(now){
  if(play){
   if(isFinite(G.t)) G.t-=dt;
   G.el+=dt;
+  // disparo automático (fuzil e submetralhadora)
   if(mouseDown&&W.auto&&G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=W.cd}
   if(G.mode=='track'){
    const t=targets[0],u=t.userData;u.ch-=dt;
@@ -787,6 +828,7 @@ function loop(now){
    if(Math.abs(t.position.x)>9){t.position.x=Math.sign(t.position.x)*9;u.v.x*=-1}
    if(t.position.y<1.3||t.position.y>7.5){t.position.y=Math.max(1.3,Math.min(7.5,t.position.y));u.v.y*=-1}
    G.tot+=dt;rc.setFromCamera(c0,cam);
+   // tracking também usa spread (mas bem menor porque é contínuo)
    const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;
    if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=W.auto?W.cd:.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
    if(on){G.onT+=dt;G.score=Math.round(G.onT*100)}else if(mouseDown&&GA.rel<0)logTrack(t,dt);
