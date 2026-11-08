@@ -9,6 +9,11 @@
 html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-family:system-ui,sans-serif;color:var(--ice);touch-action:none;-webkit-user-select:none;user-select:none}
 canvas{display:block;width:100%;height:100%;touch-action:none}
 #cross{position:fixed;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none;z-index:5}
+#scope{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:0;background:radial-gradient(circle at center,transparent 0,transparent 33vmin,#000 33.4vmin)}
+#scope:before,#scope:after{content:"";position:absolute;background:#000}
+#scope:before{left:0;right:0;top:50%;height:2px;margin-top:-1px}
+#scope:after{top:0;bottom:0;left:50%;width:2px;margin-left:-1px}
+#scope i{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:#ff4655;z-index:1}
 
 #xprev{width:96px;height:96px;background:#1b2733;flex:none}.xrow{display:flex;gap:12px;align-items:center}.xc{flex:1}.xc label{margin:6px 0;font-size:12px;justify-content:space-between}.xc select,.xc input[type=color]{width:96px}.xc input[type=range]{width:96px;flex:none}summary{cursor:pointer;color:var(--red);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-top:14px}
 #hud{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:center;gap:34px;font-weight:800;letter-spacing:.08em;text-shadow:0 0 6px #000;pointer-events:none;text-transform:uppercase;z-index:5}
@@ -28,7 +33,7 @@ input[type=range]{flex:1;accent-color:var(--red)}
 .note{font-size:11px;opacity:.55;margin-top:10px}
 
 /* Mobile controls */
-#fireBtn,#pauseBtn,#mvL,#mvR{display:none;z-index:15;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+#fireBtn,#pauseBtn,#mvL,#mvR,#scBtn{display:none;z-index:15;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
 #fireBtn{
   position:fixed;
   right:max(18px,env(safe-area-inset-right));
@@ -40,6 +45,15 @@ input[type=range]{flex:1;accent-color:var(--red)}
   box-shadow:0 0 24px #ff465566;
 }
 #fireBtn.active{background:#ff4655;transform:scale(.93)}
+#scBtn{
+  position:fixed;
+  right:max(32px,env(safe-area-inset-right));
+  bottom:calc(max(28px,env(safe-area-inset-bottom)) + 108px);
+  width:64px;height:64px;border-radius:50%;margin:0;padding:0;clip-path:none;
+  background:rgba(15,25,35,.85);border:2px solid #3dffe0aa;color:#fff;font-size:24px;
+  align-items:center;justify-content:center;
+}
+#scBtn.on{background:#3dffe0;color:#000}
 #pauseBtn{
   position:fixed;
   top:calc(10px + env(safe-area-inset-top));
@@ -62,6 +76,7 @@ body.mobile.playing #fireBtn,
 body.mobile.playing #pauseBtn{display:flex}
 body.mobile.playing.moving #mvL,
 body.mobile.playing.moving #mvR{display:flex}
+body.mobile.playing.sniper #scBtn{display:flex}
 
 body.mobile #hud{gap:18px}
 body.mobile #hud b{font-size:24px}
@@ -71,9 +86,11 @@ body.mobile button{padding:15px 12px;font-size:15px}
 </head>
 <body>
 <svg id="cross" viewBox="-48 -48 96 96" shape-rendering="crispEdges"></svg>
+<div id="scope"><i></i></div>
 <div id="hud"><div>Pontos<b id="sc">0</b></div><div class="t">Tempo<b id="tm">60</b></div><div>Precisão<b id="ac">–</b></div><div id="hsw" style="display:none">HS<b id="hs">–</b></div><div id="spw" style="display:none">Estado<b id="spd" style="font-size:20px">PARADO</b></div></div>
 
 <button id="fireBtn">FIRE</button>
+<button id="scBtn">🔭</button>
 <button id="pauseBtn">❚❚</button>
 <button id="mvL">◀</button>
 <button id="mvR">▶</button>
@@ -109,17 +126,18 @@ body.mobile button{padding:15px 12px;font-size:15px}
 <label><span>Contorno preto</span><input type="checkbox" id="xo"></label>
 </div></div><button class="alt" id="xr" style="padding:7px;font-size:11px">Restaurar mira padrão</button></details>
 <label>Sens <input type="range" id="sens" min=".1" max="2" step=".05"><b id="sv"></b></label>
-<p class="note" id="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma · WASD anda nos modos ADAD (Shift anda devagar). O melhor resultado de cada modo fica salvo neste navegador.</p>
+<p class="note" id="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma · WASD anda nos modos ADAD (Shift anda devagar) · Botão direito mira com a sniper. Fuzil e submetralhadora são automáticos: segure o botão esquerdo. O melhor resultado de cada modo fica salvo neste navegador.</p>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),R=(a,b)=>a+Math.random()*(b-a);
 const isMobile = matchMedia('(pointer:coarse)').matches || ('ontouchstart' in window) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 if(isMobile) document.body.classList.add('mobile');
+const BASEFOV=72,SCOPEFOV=20;let scoped=false;
 
 const ren=new THREE.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(ren.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b1219);scene.fog=new THREE.Fog(0x0b1219,22,50);
-const cam=new THREE.PerspectiveCamera(72,1,.05,100);cam.position.set(0,1.7,0);
+const cam=new THREE.PerspectiveCamera(BASEFOV,1,.05,100);cam.position.set(0,1.7,0);
 function resize(){ren.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',resize);resize();
 function tex(w,h,draw,rep){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);t.anisotropy=ren.capabilities.getMaxAnisotropy();return t}
@@ -214,11 +232,12 @@ flash.position.set(0,.005,-.68);flash.visible=false;gun.add(flash);
 const mLight=new THREE.PointLight(0xffc070,0,8);mLight.position.set(0,0,-.75);gun.add(mLight);
 gun.position.set(.2,-.2,-.42);cam.add(gun);
 // armas, skins e cenários
+// auto = disparo automático (segurar o gatilho) · cd = intervalo entre tiros (s) · scope = tem luneta (botão direito)
 const WP={
- rifle:{n:'Fuzil',mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,p:[[.06,.07,.42,'b',0,0,-.05],[.064,.05,.24,'d',0,-.008,-.33],[.022,.022,.2,'k',0,.005,-.55],[.05,.08,.2,'b',0,-.01,.25],[.05,.14,.06,'d',0,-.1,.1,.25],[.02,.03,.05,'k',0,.05,-.2],[.064,.012,.26,'a',0,.02,-.05],[.075,.075,.34,'s',0,-.1,.32,.15],[.04,.17,.07,'d',0,-.12,-.06,-.12,1]]},
- pistol:{n:'Pistola',mz:-.3,o:[.17,-.19,-.4],k:.6,fl:.7,p:[[.05,.055,.26,'b',0,.02,-.12],[.045,.035,.24,'d',0,-.02,-.1],[.02,.02,.05,'k',0,.02,-.27],[.045,.12,.06,'d',0,-.08,.02,.2],[.015,.02,.02,'k',0,.055,-.22],[.052,.01,.18,'a',0,.04,-.12],[.07,.07,.3,'s',0,-.1,.25,.15],[.035,.03,.05,'d',0,-.15,.03,.2,1]]},
- sniper:{n:'Sniper',mz:-1.03,o:[.2,-.2,-.4],k:1.8,fl:1.4,p:[[.06,.08,.5,'b',0,0,-.05],[.026,.026,.6,'k',0,.01,-.62],[.04,.04,.1,'d',0,.01,-.97],[.055,.1,.34,'b',0,-.02,.33],[.05,.13,.06,'d',0,-.1,.12,.25],[.045,.045,.28,'k',0,.085,-.08],[.06,.06,.06,'k',0,.085,-.24],[.055,.055,.05,'k',0,.085,.07],[.04,.04,.01,'a',0,.085,-.275],[.062,.012,.3,'a',0,.02,-.05],[.075,.075,.36,'s',0,-.1,.34,.15],[.04,.1,.07,'d',0,-.08,-.02,-.05,1]]},
- smg:{n:'Submetralhadora',mz:-.5,o:[.19,-.2,-.4],k:.8,fl:.9,p:[[.06,.075,.34,'b',0,0,-.05],[.07,.06,.16,'d',0,-.005,-.28],[.02,.02,.1,'k',0,.005,-.42],[.04,.06,.16,'b',0,0,.22],[.05,.13,.06,'d',0,-.1,.08,.25],[.025,.025,.06,'k',0,.055,-.12],[.062,.012,.2,'a',0,.025,-.04],[.075,.075,.3,'s',0,-.1,.3,.15],[.035,.22,.06,'d',0,-.16,-.12,0,1]]}
+ rifle:{n:'Fuzil · automático',auto:true,cd:.11,mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,p:[[.06,.07,.42,'b',0,0,-.05],[.064,.05,.24,'d',0,-.008,-.33],[.022,.022,.2,'k',0,.005,-.55],[.05,.08,.2,'b',0,-.01,.25],[.05,.14,.06,'d',0,-.1,.1,.25],[.02,.03,.05,'k',0,.05,-.2],[.064,.012,.26,'a',0,.02,-.05],[.075,.075,.34,'s',0,-.1,.32,.15],[.04,.17,.07,'d',0,-.12,-.06,-.12,1]]},
+ pistol:{n:'Pistola · semiautomática',auto:false,cd:.1,mz:-.3,o:[.17,-.19,-.4],k:.6,fl:.7,p:[[.05,.055,.26,'b',0,.02,-.12],[.045,.035,.24,'d',0,-.02,-.1],[.02,.02,.05,'k',0,.02,-.27],[.045,.12,.06,'d',0,-.08,.02,.2],[.015,.02,.02,'k',0,.055,-.22],[.052,.01,.18,'a',0,.04,-.12],[.07,.07,.3,'s',0,-.1,.25,.15],[.035,.03,.05,'d',0,-.15,.03,.2,1]]},
+ sniper:{n:'Sniper · mira (botão direito)',auto:false,cd:.1,scope:true,mz:-1.03,o:[.2,-.2,-.4],k:1.8,fl:1.4,p:[[.06,.08,.5,'b',0,0,-.05],[.026,.026,.6,'k',0,.01,-.62],[.04,.04,.1,'d',0,.01,-.97],[.055,.1,.34,'b',0,-.02,.33],[.05,.13,.06,'d',0,-.1,.12,.25],[.045,.045,.28,'k',0,.085,-.08],[.06,.06,.06,'k',0,.085,-.24],[.055,.055,.05,'k',0,.085,.07],[.04,.04,.01,'a',0,.085,-.275],[.062,.012,.3,'a',0,.02,-.05],[.075,.075,.36,'s',0,-.1,.34,.15],[.04,.1,.07,'d',0,-.08,-.02,-.05,1]]},
+ smg:{n:'Submetralhadora · automática',auto:true,cd:.065,mz:-.5,o:[.19,-.2,-.4],k:.8,fl:.9,p:[[.06,.075,.34,'b',0,0,-.05],[.07,.06,.16,'d',0,-.005,-.28],[.02,.02,.1,'k',0,.005,-.42],[.04,.06,.16,'b',0,0,.22],[.05,.13,.06,'d',0,-.1,.08,.25],[.025,.025,.06,'k',0,.055,-.12],[.062,.012,.2,'a',0,.025,-.04],[.075,.075,.3,'s',0,-.1,.3,.15],[.035,.22,.06,'d',0,-.16,-.12,0,1]]}
 };
 const SK={
  padrao:{n:'Padrão',b:0x2a3440,d:0x1b232c,k:0x10151a,a:0xff4655,s:0x1f2a36,m:.6,r:.35,e:0},
@@ -253,6 +272,7 @@ function setWeapon(id){
  W=WP[id]||WP.rifle;gparts.splice(0).forEach(o=>gun.remove(o));
  W.p.forEach(p=>{const o=gpart(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]||0);if(p[8])mag=o});
  flash.position.set(0,.005,W.mz);mLight.position.set(0,0,W.mz-.07);flash.scale.setScalar(W.fl);
+ scoped=false;document.body.classList.toggle('sniper',!!W.scope);$('scBtn').classList.remove('on');
 }
 function applySkin(id){
  curSk=SK[id]||SK.padrao;
@@ -286,7 +306,7 @@ function animGun(dt,now){
  const k=Math.min(1,dt*12);
  GA.sx+=((-GA.mdx*.0008-PL.vx*.003)-GA.sx)*k;GA.sy+=((GA.mdy*.0008)-GA.sy)*k;GA.mdx=GA.mdy=0;
  GA.sx=Math.max(-.05,Math.min(.05,GA.sx));GA.sy=Math.max(-.05,Math.min(.05,GA.sy));
- GA.r=Math.max(0,GA.r-dt*(mouseDown&&G.mode=='track'?6:11));
+ GA.r=Math.max(0,GA.r-dt*(mouseDown&&(G.mode=='track'||W.auto)?6:11));
  const r=GA.r,bob=Math.sin(now/1000*1.6)*.0035;let rx=r*.1*W.k,rz=0,oy=0,mg=0;
  if(GA.rel>=0){
   GA.rel+=dt/1.1;const q=GA.rel;
@@ -345,7 +365,8 @@ function coach(acc){
    if(ay>1.2)T.push(isDum()?'Seus tiros ficaram abaixo da cabeça em média. Mantenha a mira na altura da cabeça enquanto se move.':'No geral seus erros ficaram abaixo do alvo. Mantenha a mira um pouco mais alta.');
    else if(ay<-1.2)T.push('No geral seus erros ficaram acima do alvo. Baixe um pouco a mira ao chegar nele.');
   }
-  if(G.shots/Math.max(G.el,1)>3&&acc<.5)T.push('Você atirou muito rápido para a sua precisão atual. Respire, confirme a mira e só então clique.');
+  if(W.auto){if(acc<.4)T.push('Com arma automática, segurar o gatilho gasta precisão. Tente rajadas curtas e confirme a mira entre elas.')}
+  else if(G.shots/Math.max(G.el,1)>3&&acc<.5)T.push('Você atirou muito rápido para a sua precisão atual. Respire, confirme a mira e só então clique.');
   const rt=G.rt.length?G.rt.reduce((a,c)=>a+c,0)/G.rt.length:0;
   if(!isDum()&&G.mode!='prec'&&rt>1.5)T.push('Você levou mais de 1,5 s por alvo. Procure o próximo alvo enquanto termina o atual.');
   if(G.mode=='prec'&&G.hits>5&&G.cs/G.hits<.6)T.push('Seus acertos ficaram perto da borda das bolas. Treine mirar no centro: desacelere o final do movimento.');
@@ -438,6 +459,8 @@ let ac;function beep(f,d,type,v){ac=ac||new AudioContext();const o=ac.createOsci
 let sens=.4;try{sens=+localStorage.getItem('arSens')||.4}catch(e){}
 $('sens').value=sens;$('sv').textContent=sens.toFixed(2);
 $('sens').oninput=e=>{sens=+e.target.value;$('sv').textContent=sens.toFixed(2);try{localStorage.setItem('arSens',sens)}catch(e){}};
+// com a luneta, a sens diminui na proporção do zoom (mesmo movimento angular por contagem do mouse)
+const zoomK=()=>Math.tan(cam.fov*Math.PI/360)/Math.tan(BASEFOV*Math.PI/360);
 // mira personalizável
 const XD={s:'cross',c:'#3dffe0',t:2,l:6,g:5,o:true};
 let X={...XD};try{X={...X,...JSON.parse(localStorage.getItem('arX')||'{}')}}catch(e){}
@@ -474,9 +497,9 @@ function enterPlay(){
 function exitPlay(){
   locked=false;
   document.body.classList.remove('playing');
-  mouseDown=false;
+  mouseDown=false;scoped=false;
   clearInput();
-  $('fireBtn').classList.remove('active');
+  $('fireBtn').classList.remove('active');$('scBtn').classList.remove('on');
 }
 
 function start(m){
@@ -525,12 +548,14 @@ document.addEventListener('pointerlockchange',()=>{
    document.body.classList.add('playing');
  }else if(G.state=='play'){
    G.state='paused';
+   scoped=false;mouseDown=false;
    clearInput();
    document.body.classList.remove('playing');
    $('sub').textContent='Pausado.';pauseFeedback();
    $('cont').style.display='block';
    $('ov').style.display='flex';
  }else{
+   scoped=false;
    clearInput();
    document.body.classList.remove('playing');
    $('ov').style.display='flex';
@@ -541,11 +566,12 @@ document.addEventListener('pointerlockchange',()=>{
 addEventListener('mousemove',e=>{
  if(!locked||isMobile)return;
  GA.mdx+=e.movementX;GA.mdy+=e.movementY;trackMv(e);
- const k=sens*.07*Math.PI/180;
+ const k=sens*.07*Math.PI/180*zoomK();
  yaw-=e.movementX*k;
  pitch=Math.max(-1.5,Math.min(1.5,pitch-e.movementY*k));
 });
-addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false});
+addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false;if(e.button==2)scoped=false});
+addEventListener('contextmenu',e=>e.preventDefault());
 
 // Mobile touch look
 let lastTX=0,lastTY=0,lookTouchId=null;
@@ -565,16 +591,15 @@ ren.domElement.addEventListener('touchmove',e=>{
   e.preventDefault();
   for(const t of e.changedTouches){
     if(t.identifier===lookTouchId){
-      const dx=t.clientX-lastTX, dy=t.clientY-lastY_(t);
+      const dx=t.clientX-lastTX, dy=t.clientY-lastTY;
       lastTX=t.clientX; lastTY=t.clientY;
-      const k=sens*.07*Math.PI/180*2.2; // multiplicador extra para toque
+      const k=sens*.07*Math.PI/180*2.2*zoomK(); // multiplicador extra para toque
       yaw-=dx*k;
       pitch=Math.max(-1.5,Math.min(1.5,pitch-dy*k));
       GA.mdx+=dx; GA.mdy+=dy; trackMv({movementX:dx,movementY:dy});
     }
   }
 },{passive:false});
-function lastY_(t){return lastTY}
 
 ren.domElement.addEventListener('touchend',e=>{
   for(const t of e.changedTouches){
@@ -594,7 +619,7 @@ function setFire(down){
   fireBtn.classList.toggle('active',down);
   if(down && G.state==='play' && G.mode!=='track' && G.cd<=0 && GA.rel<0){
     shoot();
-    G.cd=.1;
+    G.cd=W.cd;
   }
 }
 ['touchstart','mousedown'].forEach(ev=>{
@@ -610,6 +635,13 @@ function setFire(down){
   });
 });
 
+// Botão de luneta (mobile, só com a sniper)
+$('scBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(G.state!=='play'||!W.scope)return;
+  scoped=!scoped;$('scBtn').classList.toggle('on',scoped);
+});
+
 // Pause button (mobile)
 $('pauseBtn').addEventListener('click',()=>{
   if(G.state!=='play') return;
@@ -620,11 +652,13 @@ $('pauseBtn').addEventListener('click',()=>{
   $('ov').style.display='flex';
 });
 
-// Desktop shoot
+// Desktop: botão esquerdo atira · botão direito mira (sniper)
 addEventListener('mousedown',e=>{
- if(isMobile||!locked||G.state!='play'||e.button!=0)return;
+ if(isMobile||!locked||G.state!='play')return;
+ if(e.button==2){if(W.scope)scoped=true;return}
+ if(e.button!=0)return;
  mouseDown=true;
- if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=.1}
+ if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=W.cd}
 });
 
 const rc=new THREE.Raycaster(),c0=new THREE.Vector2(0,0);
@@ -653,7 +687,7 @@ function shoot(){
 
 // Atualiza texto de ajuda
 if(isMobile){
-  $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE para atirar (segure no Tracking) · Botões ◀ ▶ andam nos modos ADAD · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador.';
+  $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE atira (segure para rajada no fuzil e na submetralhadora) · 🔭 liga a luneta da sniper · Botões ◀ ▶ andam nos modos ADAD · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador.';
   $('sub').textContent='Treino de mira em 3D. Arraste a tela para mirar e use o botão FIRE.';
 }
 
@@ -666,9 +700,18 @@ function loop(now){
  if(play&&isAd())movePlayer(dt);
  cam.position.set(PP.x,1.7,PP.z);
  cam.rotation.set(pitch,yaw,0,'YXZ');
+ // zoom da luneta (sniper)
+ const tf=(scoped&&W.scope&&play)?SCOPEFOV:BASEFOV;
+ if(Math.abs(cam.fov-tf)>.05){cam.fov+=(tf-cam.fov)*Math.min(1,dt*16);cam.updateProjectionMatrix()}
+ const sa=Math.max(0,Math.min(1,(BASEFOV-cam.fov)/(BASEFOV-SCOPEFOV)));
+ $('scope').style.opacity=Math.max(0,(sa-.55)/.45);
+ $('cross').style.opacity=sa>.5?0:1;
+ gun.visible=sa<.5;
  if(play){
   if(isFinite(G.t)) G.t-=dt;
   G.el+=dt;
+  // disparo automático (fuzil e submetralhadora)
+  if(mouseDown&&W.auto&&G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=W.cd}
   if(G.mode=='track'){
    const t=targets[0],u=t.userData;u.ch-=dt;
    if(u.ch<=0){u.ch=R(.5,1.4);const a=R(0,6.28),s=R(4,8);u.v.set(Math.cos(a)*s,Math.sin(a)*s*.6,0)}
@@ -677,7 +720,7 @@ function loop(now){
    if(t.position.y<1.3||t.position.y>7.5){t.position.y=Math.max(1.3,Math.min(7.5,t.position.y));u.v.y*=-1}
    G.tot+=dt;rc.setFromCamera(c0,cam);
    const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;
-   if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
+   if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=W.auto?W.cd:.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
    if(on){G.onT+=dt;G.score=Math.round(G.onT*100)}else if(mouseDown&&GA.rel<0)logTrack(t,dt);
    t.material.emissiveIntensity=on?1:.3;
   }
