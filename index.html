@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Aqui está o código completo com **suporte a mobile**:
 
 ### O que foi adicionado:
@@ -10,6 +11,8 @@ Aqui está o código completo com **suporte a mobile**:
 - UI adaptada (botões maiores, safe-area)
 
 ```html
+=======
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -21,6 +24,14 @@ Aqui está o código completo com **suporte a mobile**:
 html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-family:system-ui,sans-serif;color:var(--ice);touch-action:none;-webkit-user-select:none;user-select:none}
 canvas{display:block;width:100%;height:100%;touch-action:none}
 #cross{position:fixed;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none;z-index:5}
+<<<<<<< HEAD
+=======
+#scope{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:0;background:radial-gradient(circle at center,transparent 0,transparent 33vmin,#000 33.4vmin)}
+#scope:before,#scope:after{content:"";position:absolute;background:#000}
+#scope:before{left:0;right:0;top:50%;height:2px;margin-top:-1px}
+#scope:after{top:0;bottom:0;left:50%;width:2px;margin-left:-1px}
+#scope i{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:#ff4655;z-index:1}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 
 #xprev{width:96px;height:96px;background:#1b2733;flex:none}.xrow{display:flex;gap:12px;align-items:center}.xc{flex:1}.xc label{margin:6px 0;font-size:12px;justify-content:space-between}.xc select,.xc input[type=color]{width:96px}.xc input[type=range]{width:96px;flex:none}summary{cursor:pointer;color:var(--red);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-top:14px}
 #hud{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:center;gap:34px;font-weight:800;letter-spacing:.08em;text-shadow:0 0 6px #000;pointer-events:none;text-transform:uppercase;z-index:5}
@@ -40,7 +51,11 @@ input[type=range]{flex:1;accent-color:var(--red)}
 .note{font-size:11px;opacity:.55;margin-top:10px}
 
 /* Mobile controls */
+<<<<<<< HEAD
 #fireBtn,#pauseBtn{display:none;z-index:15;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+=======
+#fireBtn,#pauseBtn,#mvL,#mvR,#scBtn{display:none;z-index:15;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 #fireBtn{
   position:fixed;
   right:max(18px,env(safe-area-inset-right));
@@ -52,6 +67,18 @@ input[type=range]{flex:1;accent-color:var(--red)}
   box-shadow:0 0 24px #ff465566;
 }
 #fireBtn.active{background:#ff4655;transform:scale(.93)}
+<<<<<<< HEAD
+=======
+#scBtn{
+  position:fixed;
+  right:max(32px,env(safe-area-inset-right));
+  bottom:calc(max(28px,env(safe-area-inset-bottom)) + 108px);
+  width:64px;height:64px;border-radius:50%;margin:0;padding:0;clip-path:none;
+  background:rgba(15,25,35,.85);border:2px solid #3dffe0aa;color:#fff;font-size:24px;
+  align-items:center;justify-content:center;
+}
+#scBtn.on{background:#3dffe0;color:#000}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 #pauseBtn{
   position:fixed;
   top:calc(10px + env(safe-area-inset-top));
@@ -61,8 +88,25 @@ input[type=range]{flex:1;accent-color:var(--red)}
   color:#fff;font-size:18px;font-weight:700;
   align-items:center;justify-content:center;
 }
+<<<<<<< HEAD
 body.mobile.playing #fireBtn,
 body.mobile.playing #pauseBtn{display:flex}
+=======
+#mvL,#mvR{
+  position:fixed;bottom:max(28px,env(safe-area-inset-bottom));
+  width:74px;height:74px;border-radius:50%;margin:0;padding:0;clip-path:none;
+  background:rgba(15,25,35,.85);border:2px solid #ff465588;color:#fff;font-size:26px;
+  align-items:center;justify-content:center;
+}
+#mvL{left:max(18px,env(safe-area-inset-left))}
+#mvR{left:calc(max(18px,env(safe-area-inset-left)) + 88px)}
+#mvL.on,#mvR.on{background:#ff4655}
+body.mobile.playing #fireBtn,
+body.mobile.playing #pauseBtn{display:flex}
+body.mobile.playing.moving #mvL,
+body.mobile.playing.moving #mvR{display:flex}
+body.mobile.playing.sniper #scBtn{display:flex}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 
 body.mobile #hud{gap:18px}
 body.mobile #hud b{font-size:24px}
@@ -72,6 +116,7 @@ body.mobile button{padding:15px 12px;font-size:15px}
 </head>
 <body>
 <svg id="cross" viewBox="-48 -48 96 96" shape-rendering="crispEdges"></svg>
+<<<<<<< HEAD
 <div id="hud"><div>Pontos<b id="sc">0</b></div><div class="t">Tempo<b id="tm">60</b></div><div>Precisão<b id="ac">–</b></div><div id="hsw" style="display:none">HS<b id="hs">–</b></div></div>
 
 <button id="fireBtn">FIRE</button>
@@ -79,12 +124,30 @@ body.mobile button{padding:15px 12px;font-size:15px}
 
 <div id="ov"><div class="card">
 <h1>AIM RANGE</h1><p class="sub" id="sub">Treino de mira em 3D. Sensibilidade na mesma conversão do VALORANT (0,07° por contagem).</p>
+=======
+<div id="scope"><i></i></div>
+<div id="hud"><div>Pontos<b id="sc">0</b></div><div class="t">Tempo<b id="tm">60</b></div><div>Precisão<b id="ac">–</b></div><div id="hsw" style="display:none">HS<b id="hs">–</b></div><div id="spw" style="display:none">Estado<b id="spd" style="font-size:20px">PARADO</b></div></div>
+
+<button id="fireBtn">FIRE</button>
+<button id="scBtn">🔭</button>
+<button id="pauseBtn">❚❚</button>
+<button id="mvL">◀</button>
+<button id="mvR">▶</button>
+
+<div id="ov"><div class="card">
+<h1>AIM RANGE</h1><p class="sub" id="sub">Treino de mira em 3D. Sensibilidade na mesma conversão do VALORANT (0,07° por contagem). Dispersão de balas idêntica ao Valorant.</p>
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 <div id="res"></div>
 <button data-m="grid">Gridshot<small>3 alvos ao mesmo tempo</small></button>
 <button data-m="flick">Flick<small>1 alvo pequeno, longe e em profundidade</small></button>
 <button data-m="track">Tracking<small>Segure o botão esquerdo no alvo em movimento</small></button>
 <button data-m="head">Headshot<small>Bonecos com ~1,8 m (altura de um agente) em strafe</small></button>
 <button data-m="prec">Precisão<small>Bolas do tamanho de uma cabeça · acertar o centro vale mais</small></button>
+<<<<<<< HEAD
+=======
+<button data-m="adad_s">ADAD · Alvos parados<small>Mova-se com A/D, pare (contra-strafe) e atire</small></button>
+<button data-m="adad_m">ADAD · Alvos em movimento<small>Mova-se com A/D e acompanhe bonecos em strafe</small></button>
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 <button class="alt" id="cont" style="display:none">Continuar</button>
 <details open><summary>Arma e cenário</summary><div class="xc" style="margin-top:6px">
 <label>Cenário <select id="ssc" style="width:170px"></select></label>
@@ -106,17 +169,29 @@ body.mobile button{padding:15px 12px;font-size:15px}
 <label><span>Contorno preto</span><input type="checkbox" id="xo"></label>
 </div></div><button class="alt" id="xr" style="padding:7px;font-size:11px">Restaurar mira padrão</button></details>
 <label>Sens <input type="range" id="sens" min=".1" max="2" step=".05"><b id="sv"></b></label>
+<<<<<<< HEAD
 <p class="note" id="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma. O melhor resultado de cada modo fica salvo neste navegador.</p>
+=======
+<p class="note" id="note">Para computador (mouse e teclado). Esc pausa · R recarrega a arma · WASD anda nos modos ADAD (Shift anda devagar) · Botão direito mira com a sniper. Fuzil e submetralhadora são automáticos: segure o botão esquerdo. O melhor resultado de cada modo fica salvo neste navegador.<br><br><b style="color:#ff4655">Dispersão Valorant:</b> First-shot accuracy real (Vandal 0,25° · Phantom 0,20° · Spectre 0,40° · Operator scoped 0°). Bloom de spray aumenta com tiros consecutivos e recupera ao parar. Penalidade de movimento idêntica (correr ~+6°, andar ~+3°).</p>
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),R=(a,b)=>a+Math.random()*(b-a);
 const isMobile = matchMedia('(pointer:coarse)').matches || ('ontouchstart' in window) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 if(isMobile) document.body.classList.add('mobile');
+<<<<<<< HEAD
 
 const ren=new THREE.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(ren.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b1219);scene.fog=new THREE.Fog(0x0b1219,22,50);
 const cam=new THREE.PerspectiveCamera(72,1,.05,100);cam.position.set(0,1.7,0);
+=======
+const BASEFOV=72,SCOPEFOV=20;let scoped=false;
+
+const ren=new THREE.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(ren.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b1219);scene.fog=new THREE.Fog(0x0b1219,22,50);
+const cam=new THREE.PerspectiveCamera(BASEFOV,1,.05,100);cam.position.set(0,1.7,0);
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 function resize(){ren.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',resize);resize();
 function tex(w,h,draw,rep){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);t.anisotropy=ren.capabilities.getMaxAnisotropy();return t}
@@ -147,6 +222,118 @@ scene.add(new THREE.AmbientLight(0x8fa3b8,.55));
 // alvos
 const targets=[],parts=[],marks=[],tg=new THREE.SphereGeometry(1,32,24),halo=new THREE.SphereGeometry(1.28,20,16);
 const G={state:'menu',mode:'grid',t:60,score:0,shots:0,hits:0,onT:0,tot:0,last:new THREE.Vector3(),cd:0,rt:[]};
+<<<<<<< HEAD
+=======
+// movimento (modos ADAD)
+const keys={},vbtn={L:false,R:false},PL={vx:0,vz:0},PP={x:0,z:0},MAXV=5.4,THR=.22;
+function isAd(){return G.mode=='adad_s'||G.mode=='adad_m'}
+function isDum(){return G.mode=='head'||isAd()}
+function clearInput(){for(const k in keys)keys[k]=false;vbtn.L=vbtn.R=false;$('mvL').classList.remove('on');$('mvR').classList.remove('on')}
+addEventListener('keydown',e=>{keys[e.code]=true});
+addEventListener('keyup',e=>{keys[e.code]=false});
+addEventListener('blur',clearInput);
+function axis(v,inp,dt){
+ const tg=inp*MAXV*(keys.ShiftLeft?.5:1);
+ const a=inp===0?38:(v*inp<0?140:52); // 140 = contra-strafe (tecla oposta para quase na hora)
+ const d=tg-v;return v+Math.sign(d)*Math.min(Math.abs(d),a*dt);
+}
+function movePlayer(dt){
+ const ix=((keys.KeyD||vbtn.R)?1:0)-((keys.KeyA||vbtn.L)?1:0),iz=(keys.KeyS?1:0)-(keys.KeyW?1:0);
+ PL.vx=axis(PL.vx,ix,dt);PL.vz=axis(PL.vz,iz,dt);
+ const sn=Math.sin(yaw),cs=Math.cos(yaw),f=-PL.vz,s=PL.vx;
+ PP.x=Math.max(-13,Math.min(13,PP.x+(-sn*f+cs*s)*dt));
+ PP.z=Math.max(-8,Math.min(4,PP.z+(-cs*f-sn*s)*dt));
+}
+
+/* ========== DISPERSÃO IDÊNTICA AO VALORANT ==========
+   Valores baseados em dados da comunidade / wiki / patches:
+   - First Shot Accuracy (FSA) em graus
+   - Bloom (spray) aumenta a cada tiro e recupera ao parar
+   - Penalidade de movimento aditiva (correr ~+6°, andar ~+3°)
+   - Sniper scoped = 0° FSA
+*/
+const SPREAD = {
+  // bloom atual por arma (0 = first shot)
+  bloom: 0,
+  lastShot: 0,
+  // recovery rate (°/s) — quanto o bloom cai por segundo sem atirar
+  recovery: 8.5
+};
+
+function getMovementPenalty() {
+  // Velocidade normalizada 0..1 (THR = deadzone Valorant ~0.22-0.275)
+  const sp = Math.hypot(PL.vx, PL.vz) / MAXV;
+  if (sp <= THR) return 0;                    // parado / deadzone
+  if (keys.ShiftLeft || keys.ShiftRight) {    // andando (Shift)
+    // walk ~ +2.5° a +3.5° (rifles)
+    return 2.8 * Math.min(1, (sp - THR) / (0.6 - THR));
+  }
+  // correndo: ~ +5° a +6.5° dependendo da arma
+  return 5.8 * Math.min(1, (sp - THR) / (1 - THR));
+}
+
+function getWeaponSpread() {
+  // Retorna o spread total em graus para o próximo tiro
+  const w = W;
+  let base = w.fsa;                           // first shot accuracy
+  if (w.scope && scoped) base = 0;            // Operator/Marshal scoped = 0°
+
+  // Bloom de spray (aumenta com tiros consecutivos)
+  const bloom = SPREAD.bloom;
+
+  // Penalidade de movimento
+  const movePen = getMovementPenalty();
+
+  // Total (Valorant soma additive)
+  return Math.max(0, base + bloom + movePen);
+}
+
+function applySpreadToRay(deg) {
+  // Sempre define origem + direção base a partir da câmera
+  rc.setFromCamera(c0, cam);
+  if (deg <= 0.001) return;
+  // Distribuição uniforme no cone (quase uniforme após v6.11)
+  const ang = deg * Math.PI / 180;
+  const r = Math.sqrt(Math.random()) * ang;
+  const th = Math.random() * Math.PI * 2;
+  // Desvia a direção já apontada pela câmera
+  const dir = rc.ray.direction;
+  const right = new THREE.Vector3().crossVectors(dir, cam.up).normalize();
+  const up = new THREE.Vector3().crossVectors(right, dir).normalize();
+  dir.addScaledVector(right, Math.cos(th) * Math.sin(r));
+  dir.addScaledVector(up, Math.sin(th) * Math.sin(r));
+  dir.normalize();
+}
+
+function onShotFired() {
+  // Aumenta bloom após cada tiro (Valorant: sobe rápido nos primeiros tiros)
+  const w = W;
+  // Incremento por tiro (aprox. valores reais)
+  const inc = w.bloomInc || 0.35;
+  const maxB = w.maxBloom || 4.5;
+  SPREAD.bloom = Math.min(maxB, SPREAD.bloom + inc);
+  SPREAD.lastShot = performance.now();
+}
+
+function updateBloom(dt) {
+  // Recovery quando não está atirando
+  if (performance.now() - SPREAD.lastShot > 80) { // pequeno delay antes de começar a recuperar
+    SPREAD.bloom = Math.max(0, SPREAD.bloom - SPREAD.recovery * dt);
+  }
+}
+
+// Função antiga de spread (mantida para compatibilidade visual no ADAD)
+function spreadRay(sp){
+  const ang=Math.min(1,(sp-THR)/(1-THR))*3.2*Math.PI/180,r=Math.sqrt(Math.random())*ang,th=Math.random()*6.283;
+  rc.ray.direction.set(0,0,-1).applyEuler(new THREE.Euler(Math.sin(th)*r,Math.cos(th)*r,0)).applyQuaternion(cam.quaternion).normalize();
+}
+
+function bindMv(el,key){
+ ['touchstart','mousedown'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();vbtn[key]=true;el.classList.add('on')},{passive:false}));
+ ['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();vbtn[key]=false;el.classList.remove('on')}));
+}
+bindMv($('mvL'),'L');bindMv($('mvR'),'R');
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 function mkTarget(r){
  const m=new THREE.Mesh(tg,new THREE.MeshStandardMaterial({map:targetT,emissive:0xff4655,emissiveIntensity:.3,roughness:.25,metalness:.1}));
  m.scale.setScalar(r);m.userData={r,v:new THREE.Vector3(),ch:0,age:0,born:0};
@@ -182,11 +369,34 @@ flash.position.set(0,.005,-.68);flash.visible=false;gun.add(flash);
 const mLight=new THREE.PointLight(0xffc070,0,8);mLight.position.set(0,0,-.75);gun.add(mLight);
 gun.position.set(.2,-.2,-.42);cam.add(gun);
 // armas, skins e cenários
+<<<<<<< HEAD
 const WP={
  rifle:{n:'Fuzil',mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,p:[[.06,.07,.42,'b',0,0,-.05],[.064,.05,.24,'d',0,-.008,-.33],[.022,.022,.2,'k',0,.005,-.55],[.05,.08,.2,'b',0,-.01,.25],[.05,.14,.06,'d',0,-.1,.1,.25],[.02,.03,.05,'k',0,.05,-.2],[.064,.012,.26,'a',0,.02,-.05],[.075,.075,.34,'s',0,-.1,.32,.15],[.04,.17,.07,'d',0,-.12,-.06,-.12,1]]},
  pistol:{n:'Pistola',mz:-.3,o:[.17,-.19,-.4],k:.6,fl:.7,p:[[.05,.055,.26,'b',0,.02,-.12],[.045,.035,.24,'d',0,-.02,-.1],[.02,.02,.05,'k',0,.02,-.27],[.045,.12,.06,'d',0,-.08,.02,.2],[.015,.02,.02,'k',0,.055,-.22],[.052,.01,.18,'a',0,.04,-.12],[.07,.07,.3,'s',0,-.1,.25,.15],[.035,.03,.05,'d',0,-.15,.03,.2,1]]},
  sniper:{n:'Sniper',mz:-1.03,o:[.2,-.2,-.4],k:1.8,fl:1.4,p:[[.06,.08,.5,'b',0,0,-.05],[.026,.026,.6,'k',0,.01,-.62],[.04,.04,.1,'d',0,.01,-.97],[.055,.1,.34,'b',0,-.02,.33],[.05,.13,.06,'d',0,-.1,.12,.25],[.045,.045,.28,'k',0,.085,-.08],[.06,.06,.06,'k',0,.085,-.24],[.055,.055,.05,'k',0,.085,.07],[.04,.04,.01,'a',0,.085,-.275],[.062,.012,.3,'a',0,.02,-.05],[.075,.075,.36,'s',0,-.1,.34,.15],[.04,.1,.07,'d',0,-.08,-.02,-.05,1]]},
  smg:{n:'Submetralhadora',mz:-.5,o:[.19,-.2,-.4],k:.8,fl:.9,p:[[.06,.075,.34,'b',0,0,-.05],[.07,.06,.16,'d',0,-.005,-.28],[.02,.02,.1,'k',0,.005,-.42],[.04,.06,.16,'b',0,0,.22],[.05,.13,.06,'d',0,-.1,.08,.25],[.025,.025,.06,'k',0,.055,-.12],[.062,.012,.2,'a',0,.025,-.04],[.075,.075,.3,'s',0,-.1,.3,.15],[.035,.22,.06,'d',0,-.16,-.12,0,1]]}
+=======
+// auto = disparo automático · cd = intervalo entre tiros (s) · scope = tem luneta
+// fsa = First Shot Accuracy em graus (Valorant)
+// bloomInc = quanto o bloom sobe por tiro
+// maxBloom = teto do bloom de spray
+const WP={
+ rifle:{n:'Fuzil · automático (Vandal)',auto:true,cd:.1026,mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,
+  fsa:0.25, bloomInc:0.38, maxBloom:4.8,
+  p:[[.06,.07,.42,'b',0,0,-.05],[.064,.05,.24,'d',0,-.008,-.33],[.022,.022,.2,'k',0,.005,-.55],[.05,.08,.2,'b',0,-.01,.25],[.05,.14,.06,'d',0,-.1,.1,.25],[.02,.03,.05,'k',0,.05,-.2],[.064,.012,.26,'a',0,.02,-.05],[.075,.075,.34,'s',0,-.1,.32,.15],[.04,.17,.07,'d',0,-.12,-.06,-.12,1]]},
+ phantom:{n:'Fuzil · automático (Phantom)',auto:true,cd:.0909,mz:-.68,o:[.2,-.2,-.42],k:1,fl:1,
+  fsa:0.20, bloomInc:0.32, maxBloom:4.2,
+  p:[[.06,.07,.42,'b',0,0,-.05],[.064,.05,.24,'d',0,-.008,-.33],[.022,.022,.2,'k',0,.005,-.55],[.05,.08,.2,'b',0,-.01,.25],[.05,.14,.06,'d',0,-.1,.1,.25],[.02,.03,.05,'k',0,.05,-.2],[.064,.012,.26,'a',0,.02,-.05],[.075,.075,.34,'s',0,-.1,.32,.15],[.04,.17,.07,'d',0,-.12,-.06,-.12,1]]},
+ pistol:{n:'Pistola · semiautomática (Sheriff)',auto:false,cd:.25,mz:-.3,o:[.17,-.19,-.4],k:.6,fl:.7,
+  fsa:0.25, bloomInc:0.55, maxBloom:3.5,
+  p:[[.05,.055,.26,'b',0,.02,-.12],[.045,.035,.24,'d',0,-.02,-.1],[.02,.02,.05,'k',0,.02,-.27],[.045,.12,.06,'d',0,-.08,.02,.2],[.015,.02,.02,'k',0,.055,-.22],[.052,.01,.18,'a',0,.04,-.12],[.07,.07,.3,'s',0,-.1,.25,.15],[.035,.03,.05,'d',0,-.15,.03,.2,1]]},
+ sniper:{n:'Sniper · mira (Operator)',auto:false,cd:1.67,scope:true,mz:-1.03,o:[.2,-.2,-.4],k:1.8,fl:1.4,
+  fsa:5.0, bloomInc:0, maxBloom:0,   // hipfire 5°, scoped = 0°
+  p:[[.06,.08,.5,'b',0,0,-.05],[.026,.026,.6,'k',0,.01,-.62],[.04,.04,.1,'d',0,.01,-.97],[.055,.1,.34,'b',0,-.02,.33],[.05,.13,.06,'d',0,-.1,.12,.25],[.045,.045,.28,'k',0,.085,-.08],[.06,.06,.06,'k',0,.085,-.24],[.055,.055,.05,'k',0,.085,.07],[.04,.04,.01,'a',0,.085,-.275],[.062,.012,.3,'a',0,.02,-.05],[.075,.075,.36,'s',0,-.1,.34,.15],[.04,.1,.07,'d',0,-.08,-.02,-.05,1]]},
+ smg:{n:'Submetralhadora · automática (Spectre)',auto:true,cd:.075,mz:-.5,o:[.19,-.2,-.4],k:.8,fl:.9,
+  fsa:0.40, bloomInc:0.28, maxBloom:5.5,
+  p:[[.06,.075,.34,'b',0,0,-.05],[.07,.06,.16,'d',0,-.005,-.28],[.02,.02,.1,'k',0,.005,-.42],[.04,.06,.16,'b',0,0,.22],[.05,.13,.06,'d',0,-.1,.08,.25],[.025,.025,.06,'k',0,.055,-.12],[.062,.012,.2,'a',0,.025,-.04],[.075,.075,.3,'s',0,-.1,.3,.15],[.035,.22,.06,'d',0,-.16,-.12,0,1]]}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 };
 const SK={
  padrao:{n:'Padrão',b:0x2a3440,d:0x1b232c,k:0x10151a,a:0xff4655,s:0x1f2a36,m:.6,r:.35,e:0},
@@ -218,6 +428,7 @@ function setScn(id){
 }
 let W=WP.rifle,curSk=SK.padrao;
 function setWeapon(id){
+<<<<<<< HEAD
   GM.g=new THREE.MeshStandardMaterial({color:0x161a20,roughness:.75,metalness:.1});
 GM.m=new THREE.MeshStandardMaterial({color:0x2d3e52,roughness:.9});
 GM.t=new THREE.MeshStandardMaterial({color:0xff4655,roughness:.6,emissive:0xff4655,emissiveIntensity:.3});
@@ -271,6 +482,13 @@ function setWeapon(id){
  scoped=false;document.body.classList.toggle('sniper',!!W.scope);$('scBtn').classList.remove('on');
  SPREAD.bloom=0;
 }
+=======
+ W=WP[id]||WP.rifle;gparts.splice(0).forEach(o=>gun.remove(o));
+ W.p.forEach(p=>{const o=gpart(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]||0);if(p[8])mag=o});
+ flash.position.set(0,.005,W.mz);mLight.position.set(0,0,W.mz-.07);flash.scale.setScalar(W.fl);
+ scoped=false;document.body.classList.toggle('sniper',!!W.scope);$('scBtn').classList.remove('on');
+ SPREAD.bloom=0; // reseta bloom ao trocar de arma
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 }
 function applySkin(id){
  curSk=SK[id]||SK.padrao;
@@ -302,9 +520,15 @@ function fire(p){
 addEventListener('keydown',e=>{if(e.code=='KeyR'&&locked&&G.state=='play'&&GA.rel<0)GA.rel=0});
 function animGun(dt,now){
  const k=Math.min(1,dt*12);
+<<<<<<< HEAD
  GA.sx+=((-GA.mdx*.0008)-GA.sx)*k;GA.sy+=((GA.mdy*.0008)-GA.sy)*k;GA.mdx=GA.mdy=0;
  GA.sx=Math.max(-.05,Math.min(.05,GA.sx));GA.sy=Math.max(-.05,Math.min(.05,GA.sy));
  GA.r=Math.max(0,GA.r-dt*(mouseDown&&G.mode=='track'?6:11));
+=======
+ GA.sx+=((-GA.mdx*.0008-PL.vx*.003)-GA.sx)*k;GA.sy+=((GA.mdy*.0008)-GA.sy)*k;GA.mdx=GA.mdy=0;
+ GA.sx=Math.max(-.05,Math.min(.05,GA.sx));GA.sy=Math.max(-.05,Math.min(.05,GA.sy));
+ GA.r=Math.max(0,GA.r-dt*(mouseDown&&(G.mode=='track'||W.auto)?6:11));
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
  const r=GA.r,bob=Math.sin(now/1000*1.6)*.0035;let rx=r*.1*W.k,rz=0,oy=0,mg=0;
  if(GA.rel>=0){
   GA.rel+=dt/1.1;const q=GA.rel;
@@ -314,6 +538,92 @@ function animGun(dt,now){
  gun.position.set(W.o[0]+GA.sx,W.o[1]+bob+GA.sy+oy,W.o[2]+r*.07*W.k);gun.rotation.set(rx,0,rz);if(mag)mag.position.y=mag.userData.y0+mg;
  GA.flash-=dt;flash.visible=GA.flash>0;mLight.intensity=GA.flash>0?2.5:0;
 }
+<<<<<<< HEAD
+=======
+// feedback pós-rodada
+const MV={x:0,y:0,t:0};
+function trackMv(e){const n=performance.now(),k=Math.exp(-(n-MV.t)/80);MV.x=MV.x*k+e.movementX;MV.y=MV.y*k+e.movementY;MV.t=n}
+function offs(p){const v=p.clone().sub(cam.position).applyQuaternion(cam.quaternion.clone().invert());return[Math.atan2(v.x,-v.z)*57.3,Math.atan2(v.y,-v.z)*57.3]}
+function logMiss(){
+ if(G.curMoving)return; // tiro em movimento tem desvio aleatório: não entra na análise de sens
+ const pts=isDum()?dummies.map(d=>new THREE.Vector3(d.position.x,1.66*d.scale.y,d.position.z)):targets.map(t=>t.position);
+ let best=null,bd=1e9;
+ for(const p of pts){const o=offs(p),a=Math.hypot(o[0],o[1]);if(a<bd){bd=a;best=o}}
+ if(!best||bd>12)return;
+ G.mn++;G.my+=best[1];
+ const k=Math.exp(-(performance.now()-MV.t)/80),L=[MV.x*k,-MV.y*k],ml=Math.hypot(L[0],L[1]);
+ if(ml<8)return;
+ const c=(L[0]*best[0]+L[1]*best[1])/(ml*Math.max(bd,.001));
+ if(c<-.3)G.ov++;else if(c>.3)G.un++;
+}
+function logTrack(t,dt){
+ const o=offs(t.position),a=Math.hypot(o[0],o[1]);if(a>15||a<.2)return;
+ const v=t.userData.v.clone().applyQuaternion(cam.quaternion.clone().invert()),vl=Math.hypot(v.x,v.y);if(vl<.5)return;
+ const c=(o[0]*v.x+o[1]*v.y)/(a*vl);
+ if(c>.3)G.tl+=dt;else if(c<-.3)G.td+=dt;
+}
+function applySens(v){sens=v;$('sens').value=v;$('sv').textContent=v.toFixed(2);try{localStorage.setItem('arSens',v)}catch(e){}}
+const tipBox=(arr,btn='',dados='')=>`<div style='background:#1b2733;border-left:3px solid #ff4655;padding:10px 12px;margin:10px 0;font-size:13px;line-height:1.55;text-align:left'><b style='color:#ff4655;letter-spacing:.08em'>FEEDBACK</b>${arr.map(t=>`<div style='margin-top:6px'>• ${t}</div>`).join('')}${dados?`<div style='margin-top:8px;font-size:11px;opacity:.6'>${dados}</div>`:''}${btn}</div>`;
+function coach(acc){
+ const T=[],trk=G.mode=='track';let ns=null,dados='';
+ if(trk?G.tot<8:G.shots<15)return tipBox(['Poucos tiros nesta rodada para uma análise confiável. Jogue a rodada inteira para receber dicas melhores.']);
+ const ch=f=>{let v=Math.max(.1,Math.min(2,Math.round(sens*f*20)/20));if(v===sens)v=Math.max(.1,Math.round((sens+(f<1?-.05:.05))*20)/20);return v};
+ if(trk){
+  const e=G.tl+G.td;dados=`Rastreio: ${G.td.toFixed(1)} s à frente do alvo · ${G.tl.toFixed(1)} s atrás dele`;
+  if(e>1.5){const ld=G.td/e;
+   if(ld>=.6){ns=ch(.88);T.push(`Quando perdeu o alvo, você estava na frente dele em ${Math.round(ld*100)}% do tempo. Isso sugere sensibilidade alta ou correções bruscas.`)}
+   else if(ld<=.4&&acc<.6){ns=ch(1.1);T.push(`Quando perdeu o alvo, você estava atrás dele em ${Math.round((1-ld)*100)}% do tempo. Antecipe o movimento e acompanhe de forma contínua; se faltar curso do mouse, aumentar a sens pode ajudar.`)}
+   else T.push('Seus erros de rastreio ficaram equilibrados entre ficar na frente e atrás do alvo. A sens parece adequada.');
+  }
+  if(acc<.4)T.push('Faça movimentos suaves e contínuos, sem corrigir aos saltos. Olhe para o alvo, não para a mira.');
+  else if(acc>=.7)T.push('Ótimo rastreio! Teste o modo Headshot, que exige a mesma suavidade em um alvo menor.');
+ }else{
+  const m=G.ov+G.un;dados=`${G.mn} erros próximos analisados: passou do alvo ${G.ov}x · parou antes ${G.un}x`;
+  if(m>=4){const ov=G.ov/m;
+   if(ov>=.65){ns=ch(ov>=.8?.8:.88);T.push(`${Math.round(ov*100)}% dos seus erros próximos foram por passar do alvo. Sua sensibilidade provavelmente está alta.`)}
+   else if(ov<=.35&&acc<.75){ns=ch(1.1);T.push(`${Math.round((1-ov)*100)}% dos seus erros próximos foram por parar antes do alvo. Pode ser sens baixa ou movimentos curtos: puxe o mouse até o alvo em um só movimento.`)}
+   else T.push('Seus erros ficaram equilibrados entre passar e parar antes do alvo. A sens parece adequada; foque em consistência.');
+  }else if(acc>=.8)T.push('Você errou pouco, então não há sinal de que a sensibilidade precise mudar.');
+  else T.push('Poucos erros próximos do alvo para avaliar a sens com segurança.');
+  if(G.mn>=4){const ay=G.my/G.mn;
+   if(ay>1.2)T.push(isDum()?'Seus tiros ficaram abaixo da cabeça em média. Mantenha a mira na altura da cabeça enquanto se move.':'No geral seus erros ficaram abaixo do alvo. Mantenha a mira um pouco mais alta.');
+   else if(ay<-1.2)T.push('No geral seus erros ficaram acima do alvo. Baixe um pouco a mira ao chegar nele.');
+  }
+  if(W.auto){if(acc<.4)T.push('Com arma automática, segurar o gatilho gasta precisão. Tente rajadas curtas e confirme a mira entre elas.')}
+  else if(G.shots/Math.max(G.el,1)>3&&acc<.5)T.push('Você atirou muito rápido para a sua precisão atual. Respire, confirme a mira e só então clique.');
+  const rt=G.rt.length?G.rt.reduce((a,c)=>a+c,0)/G.rt.length:0;
+  if(!isDum()&&G.mode!='prec'&&rt>1.5)T.push('Você levou mais de 1,5 s por alvo. Procure o próximo alvo enquanto termina o atual.');
+  if(G.mode=='prec'&&G.hits>5&&G.cs/G.hits<.6)T.push('Seus acertos ficaram perto da borda das bolas. Treine mirar no centro: desacelere o final do movimento.');
+  if(isDum()&&G.hits>=8){const hs=G.hh/G.hits;
+   if(hs<.3)T.push(`Só ${Math.round(hs*100)}% dos acertos foram na cabeça. Deixe a mira na altura da cabeça e ajuste só na horizontal.`);
+   else if(hs>=.5)T.push(`${Math.round(hs*100)}% dos acertos foram headshots. Muito bom!`);
+  }
+  if(isAd()){
+   const tot=G.ms+G.ss;
+   if(tot>0)dados+=` · ${G.ss} tiros parado · ${G.ms} tiros em movimento`;
+   if(tot>=10){const pm=G.ms/tot;
+    if(pm>=.4)T.push(`${Math.round(pm*100)}% dos seus tiros saíram em movimento, com a mira aberta. Antes de clicar, pare o personagem: aperte a tecla oposta (por exemplo D depois de A) e atire quando o estado mostrar PARADO.`);
+    else if(pm>=.15)T.push(`${Math.round(pm*100)}% dos tiros saíram em movimento. Está perto: espere o personagem parar por completo antes de atirar.`);
+    else T.push('Quase todos os tiros saíram com o personagem parado. Ótimo contra-strafe!');
+    if(G.ss>=5&&G.ms>=5){const sa=G.sh/G.ss,ma=G.mh/G.ms;
+     if(ma<sa-.15)T.push(`Parado você acertou ${Math.round(sa*100)}% dos tiros e em movimento ${Math.round(ma*100)}%: o contra-strafe faz diferença na sua precisão.`);
+    }
+   }
+   T.push(G.mode=='adad_m'?'Contra bonecos em strafe, antecipe a direção deles e mantenha a mira na altura da cabeça enquanto troca A e D.':'Treine o ritmo: A, para com D, atira; D, para com A, atira. Mantenha a mira na altura da cabeça o tempo todo.');
+  }
+  if(acc>=.85)T.push('Ótima precisão! Experimente os modos Precisão ou Headshot para aumentar a dificuldade.');
+ }
+ if(ns)T.push('Teste a mudança por algumas rodadas antes de decidir: uma rodada isolada varia bastante e mudar muito de uma vez atrapalha.');
+ const btn=ns?`<button class='alt' style='padding:8px;font-size:12px;margin-top:10px' onclick='applySens(${ns})'>Testar sens ${ns.toFixed(2)} (atual ${sens.toFixed(2)})</button>`:'';
+ return tipBox(T,btn,dados);
+}
+function pauseFeedback(){
+ if(!isFinite(G.t)&&(G.mode=='track'?G.tot>0:G.shots>0)){
+  const acc=G.mode=='track'?G.onT/Math.max(G.tot,.01):G.hits/Math.max(G.shots,1);
+  $('res').innerHTML=coach(acc);
+ }
+}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 // bonecos (altura ~1,8 m base, escalados 1.25x)
 const dummies=[],hbox=[];
 function mkDummy(){
@@ -335,10 +645,19 @@ function placeDummy(g){
 }
 function shootHead(){
  const h=rc.intersectObjects(hbox,false)[0];
+<<<<<<< HEAD
  if(!h){beep(130,.06,'square',.07);const wh=rc.intersectObjects(walls,false)[0];fire(wh?wh.point:rc.ray.at(60,new THREE.Vector3()));return}
  fire(h.point);
  const o=h.object,g=o.userData.dummy,u=g.userData,head=o.userData.part=='head';
  G.hits++;if(head)G.hh++;else G.bh++;u.hp-=head?150:40;
+=======
+ if(!h){beep(130,.06,'square',.07);const wh=rc.intersectObjects(walls,false)[0];fire(wh?wh.point:rc.ray.at(60,new THREE.Vector3()));logMiss();return}
+ fire(h.point);
+ const o=h.object,g=o.userData.dummy,u=g.userData,head=o.userData.part=='head';
+ G.hits++;if(head)G.hh++;else G.bh++;
+ if(G.curMoving)G.mh++;else G.sh++;
+ u.hp-=head?150:40;
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
  if(u.hp<=0){G.kills++;G.score+=head?150:50;burst(h.point,head?24:12);beep(head?1500:700,.12,'triangle',.2);if(head)beep(2100,.08,'sine',.12);placeDummy(g)}
  else{burst(h.point,6);beep(500,.07,'triangle',.15)}
 }
@@ -349,7 +668,11 @@ function updExtra(dt,now,play){
   const u=g.userData;u.age+=dt;
   const grow=Math.min(1,u.age/.15+.05);
   g.scale.set(1.25*grow,1.25*grow,1.25*grow);
+<<<<<<< HEAD
   if(play){u.ch-=dt;if(u.ch<=0){u.ch=R(.5,1.6);u.vx=Math.random()<.25?0:(Math.random()<.5?-1:1)*R(2.5,4)}
+=======
+  if(play&&G.mode!='adad_s'){u.ch-=dt;if(u.ch<=0){u.ch=R(.5,1.6);u.vx=Math.random()<.25?0:(Math.random()<.5?-1:1)*R(2.5,4)}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
    g.position.x+=u.vx*dt;if(Math.abs(g.position.x)>11){g.position.x=Math.sign(g.position.x)*11;u.vx*=-1}}
   const w=u.vx&&play?Math.sin(now/110)*.5:0;
   u.legs[0].rotation.x=w;u.legs[1].rotation.x=-w;u.arms[0].rotation.x=-w*.6;u.arms[1].rotation.x=w*.6;
@@ -359,14 +682,29 @@ function updExtra(dt,now,play){
   const l=tracers[i];l.userData.life-=dt;l.material.opacity=Math.max(0,l.userData.life/.07);
   if(l.userData.life<=0){scene.remove(l);l.geometry.dispose();l.material.dispose();tracers.splice(i,1)}
  }
+<<<<<<< HEAD
  $('hsw').style.display=G.mode=='head'?'':'none';
  $('hs').textContent=G.hits&&G.hh!=null?Math.round(G.hh/G.hits*100)+'%':'–';
+=======
+ $('hsw').style.display=isDum()?'':'none';
+ $('hs').textContent=G.hits&&G.hh!=null?Math.round(G.hh/G.hits*100)+'%':'–';
+ const ad=isAd();$('spw').style.display=ad?'':'none';
+ if(ad){const sp=Math.hypot(PL.vx,PL.vz)/MAXV,mv=sp>THR;
+  $('spd').textContent=mv?'MOVENDO':'PARADO';$('spd').style.color=mv?'#ff4655':'#3dffe0';
+  $('cross').style.transform='scale('+(1+Math.min(1,sp)*.6)+')';
+ }else $('cross').style.transform='';
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 }
 let ac;function beep(f,d,type,v){ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
 // fluxo
 let sens=.4;try{sens=+localStorage.getItem('arSens')||.4}catch(e){}
 $('sens').value=sens;$('sv').textContent=sens.toFixed(2);
 $('sens').oninput=e=>{sens=+e.target.value;$('sv').textContent=sens.toFixed(2);try{localStorage.setItem('arSens',sens)}catch(e){}};
+<<<<<<< HEAD
+=======
+// com a luneta, a sens diminui na proporção do zoom (mesmo movimento angular por contagem do mouse)
+const zoomK=()=>Math.tan(cam.fov*Math.PI/360)/Math.tan(BASEFOV*Math.PI/360);
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 // mira personalizável
 const XD={s:'cross',c:'#3dffe0',t:2,l:6,g:5,o:true};
 let X={...XD};try{X={...X,...JSON.parse(localStorage.getItem('arX')||'{}')}}catch(e){}
@@ -391,7 +729,11 @@ for(const id in xm){const e=$(id);e.oninput=()=>{X[xm[id]]=e.type=='range'?+e.va
 $('xo').onchange=e=>{X.o=e.target.checked;saveX()};
 $('xr').onclick=()=>{X={...XD};syncX()};
 syncX();
+<<<<<<< HEAD
 const NM={grid:'Gridshot',flick:'Flick',track:'Tracking',head:'Headshot',prec:'Precisão'};
+=======
+const NM={grid:'Gridshot',flick:'Flick',track:'Tracking',head:'Headshot',prec:'Precisão',adad_s:'ADAD (alvos parados)',adad_m:'ADAD (alvos em movimento)'};
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 function best(m,s){let b=0;try{b=+localStorage.getItem('arBest'+m)||0;if(s!=null&&s>b){b=s;localStorage.setItem('arBest'+m,b)}}catch(e){}return b}
 
 function enterPlay(){
@@ -403,17 +745,33 @@ function enterPlay(){
 function exitPlay(){
   locked=false;
   document.body.classList.remove('playing');
+<<<<<<< HEAD
   mouseDown=false;
   $('fireBtn').classList.remove('active');
+=======
+  mouseDown=false;scoped=false;
+  clearInput();
+  $('fireBtn').classList.remove('active');$('scBtn').classList.remove('on');
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 }
 
 function start(m){
  targets.splice(0).forEach(t=>scene.remove(t));dummies.splice(0).forEach(d=>scene.remove(d));hbox.length=0;
  const tt = (S.t === 'inf') ? Infinity : (+S.t || 60);
+<<<<<<< HEAD
  Object.assign(G,{state:'play',mode:m,t:tt,score:0,shots:0,hits:0,onT:0,tot:0,rt:[],hh:0,bh:0,kills:0,cs:0});
  if(m=='grid')for(let i=0;i<3;i++)place(mkTarget(.55));
  else if(m=='flick')place(mkTarget(.3));
  else if(m=='head'){for(let i=0;i<2;i++)placeDummy(mkDummy())}
+=======
+ Object.assign(G,{state:'play',mode:m,t:tt,score:0,shots:0,hits:0,onT:0,tot:0,rt:[],hh:0,bh:0,kills:0,cs:0,ov:0,un:0,mn:0,my:0,tl:0,td:0,el:0,ms:0,mh:0,ss:0,sh:0,curMoving:false});
+ PP.x=0;PP.z=0;PL.vx=0;PL.vz=0;
+ SPREAD.bloom=0; // reseta bloom ao iniciar rodada
+ document.body.classList.toggle('moving',isAd());
+ if(m=='grid')for(let i=0;i<3;i++)place(mkTarget(.55));
+ else if(m=='flick')place(mkTarget(.3));
+ else if(isDum()){for(let i=0;i<2;i++)placeDummy(mkDummy())}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
  else if(m=='prec'){for(let i=0;i<3;i++){const t=mkTarget(.16);t.material.emissiveIntensity=.7;place(t)}}
  else{const t=mkTarget(.6);t.position.set(0,4,-20);t.userData.age=1}
  $('res').innerHTML='';
@@ -428,9 +786,16 @@ function finish(){
  exitPlay();
  if(!isMobile) document.exitPointerLock();
  const acc=G.mode=='track'?G.onT/Math.max(G.tot,.01):G.hits/Math.max(G.shots,1),b=best(G.mode,G.score);
+<<<<<<< HEAD
  $('sub').textContent=NM[G.mode]+' concluído. Escolha um modo para jogar de novo.';
  $('res').innerHTML=`<div class="res"><div><b>${G.score}</b>Pontos</div><div><b>${(acc*100).toFixed(0)}%</b>Precisão</div><div><b>${b}</b>Recorde</div>${G.mode=='head'?`<div><b>${G.kills}</b>Abates</div><div><b>${G.hits?Math.round(G.hh/G.hits*100):0}%</b>HS</div>`:G.mode=='prec'?`<div><b>${G.hits?Math.round(G.cs/G.hits*100):0}%</b>Centro</div>`:''}</div>`+
   (G.rt.length?`<p class="sub">Tempo médio por alvo: ${(G.rt.reduce((a,c)=>a+c,0)/G.rt.length).toFixed(2)} s</p>`:'');
+=======
+ const stp=(G.ms+G.ss)?Math.round(G.ss/(G.ms+G.ss)*100):0;
+ $('sub').textContent=NM[G.mode]+' concluído. Escolha um modo para jogar de novo.';
+ $('res').innerHTML=`<div class="res"><div><b>${G.score}</b>Pontos</div><div><b>${(acc*100).toFixed(0)}%</b>Precisão</div><div><b>${b}</b>Recorde</div>${isDum()?`<div><b>${G.kills}</b>Abates</div><div><b>${G.hits?Math.round(G.hh/G.hits*100):0}%</b>HS</div>${isAd()?`<div><b>${stp}%</b>Parado</div>`:''}`:G.mode=='prec'?`<div><b>${G.hits?Math.round(G.cs/G.hits*100):0}%</b>Centro</div>`:''}</div>`+
+  (G.rt.length?`<p class="sub">Tempo médio por alvo: ${(G.rt.reduce((a,c)=>a+c,0)/G.rt.length).toFixed(2)} s</p>`:'')+coach(acc);
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
  $('cont').style.display='none';$('ov').style.display='flex';
 }
 document.querySelectorAll('button[data-m]').forEach(b=>b.onclick=()=>start(b.dataset.m));
@@ -450,11 +815,23 @@ document.addEventListener('pointerlockchange',()=>{
    document.body.classList.add('playing');
  }else if(G.state=='play'){
    G.state='paused';
+<<<<<<< HEAD
    document.body.classList.remove('playing');
    $('sub').textContent='Pausado.';
    $('cont').style.display='block';
    $('ov').style.display='flex';
  }else{
+=======
+   scoped=false;mouseDown=false;
+   clearInput();
+   document.body.classList.remove('playing');
+   $('sub').textContent='Pausado.';pauseFeedback();
+   $('cont').style.display='block';
+   $('ov').style.display='flex';
+ }else{
+   scoped=false;
+   clearInput();
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
    document.body.classList.remove('playing');
    $('ov').style.display='flex';
  }
@@ -463,12 +840,22 @@ document.addEventListener('pointerlockchange',()=>{
 // Desktop mouse look
 addEventListener('mousemove',e=>{
  if(!locked||isMobile)return;
+<<<<<<< HEAD
  GA.mdx+=e.movementX;GA.mdy+=e.movementY;
  const k=sens*.07*Math.PI/180;
  yaw-=e.movementX*k;
  pitch=Math.max(-1.5,Math.min(1.5,pitch-e.movementY*k));
 });
 addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false});
+=======
+ GA.mdx+=e.movementX;GA.mdy+=e.movementY;trackMv(e);
+ const k=sens*.07*Math.PI/180*zoomK();
+ yaw-=e.movementX*k;
+ pitch=Math.max(-1.5,Math.min(1.5,pitch-e.movementY*k));
+});
+addEventListener('mouseup',e=>{if(e.button==0)mouseDown=false;if(e.button==2)scoped=false});
+addEventListener('contextmenu',e=>e.preventDefault());
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 
 // Mobile touch look
 let lastTX=0,lastTY=0,lookTouchId=null;
@@ -476,7 +863,10 @@ ren.domElement.addEventListener('touchstart',e=>{
   if(G.state!=='play'||!isMobile) return;
   e.preventDefault();
   for(const t of e.changedTouches){
+<<<<<<< HEAD
     // ignora se for no botão fire (ele tem seu próprio handler)
+=======
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
     if(lookTouchId===null){
       lookTouchId=t.identifier;
       lastTX=t.clientX; lastTY=t.clientY;
@@ -491,10 +881,17 @@ ren.domElement.addEventListener('touchmove',e=>{
     if(t.identifier===lookTouchId){
       const dx=t.clientX-lastTX, dy=t.clientY-lastTY;
       lastTX=t.clientX; lastTY=t.clientY;
+<<<<<<< HEAD
       const k=sens*.07*Math.PI/180*2.2; // multiplicador extra para toque
       yaw-=dx*k;
       pitch=Math.max(-1.5,Math.min(1.5,pitch-dy*k));
       GA.mdx+=dx; GA.mdy+=dy;
+=======
+      const k=sens*.07*Math.PI/180*2.2*zoomK(); // multiplicador extra para toque
+      yaw-=dx*k;
+      pitch=Math.max(-1.5,Math.min(1.5,pitch-dy*k));
+      GA.mdx+=dx; GA.mdy+=dy; trackMv({movementX:dx,movementY:dy});
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
     }
   }
 },{passive:false});
@@ -517,7 +914,11 @@ function setFire(down){
   fireBtn.classList.toggle('active',down);
   if(down && G.state==='play' && G.mode!=='track' && G.cd<=0 && GA.rel<0){
     shoot();
+<<<<<<< HEAD
     G.cd=.1;
+=======
+    G.cd=W.cd;
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
   }
 }
 ['touchstart','mousedown'].forEach(ev=>{
@@ -533,26 +934,67 @@ function setFire(down){
   });
 });
 
+<<<<<<< HEAD
+=======
+// Botão de luneta (mobile, só com a sniper)
+$('scBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(G.state!=='play'||!W.scope)return;
+  scoped=!scoped;$('scBtn').classList.toggle('on',scoped);
+});
+
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 // Pause button (mobile)
 $('pauseBtn').addEventListener('click',()=>{
   if(G.state!=='play') return;
   G.state='paused';
   exitPlay();
+<<<<<<< HEAD
   $('sub').textContent='Pausado.';
+=======
+  $('sub').textContent='Pausado.';pauseFeedback();
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
   $('cont').style.display='block';
   $('ov').style.display='flex';
 });
 
+<<<<<<< HEAD
 // Desktop shoot
 addEventListener('mousedown',e=>{
  if(isMobile||!locked||G.state!='play'||e.button!=0)return;
  mouseDown=true;
  if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=.1}
+=======
+// Desktop: botão esquerdo atira · botão direito mira (sniper)
+addEventListener('mousedown',e=>{
+ if(isMobile||!locked||G.state!='play')return;
+ if(e.button==2){if(W.scope)scoped=true;return}
+ if(e.button!=0)return;
+ mouseDown=true;
+ if(G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=W.cd}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 });
 
 const rc=new THREE.Raycaster(),c0=new THREE.Vector2(0,0);
 function shoot(){
+<<<<<<< HEAD
  G.shots++;rc.setFromCamera(c0,cam);if(G.mode=='head')return shootHead();
+=======
+ G.shots++;
+ // ===== DISPERSÃO VALORANT =====
+ const totalSpread = getWeaponSpread();
+ applySpreadToRay(totalSpread); // setFromCamera + desvio angular
+ onShotFired(); // aumenta bloom
+
+ G.curMoving=false;
+ if(isAd()){
+   const sp=Math.hypot(PL.vx,PL.vz)/MAXV;
+   G.curMoving=sp>THR;
+   if(G.curMoving) G.ms++; else G.ss++;
+ }
+
+ if(isDum())return shootHead();
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
  const h=rc.intersectObjects(targets,false)[0];
  if(h){
   const t=h.object;fire(h.point);G.hits++;burst(t.position);beep(950,.09,'triangle',.18);
@@ -561,11 +1003,21 @@ function shoot(){
   place(t);
  }else{
   beep(130,.06,'square',.07);
+<<<<<<< HEAD
   const w=rc.intersectObjects(walls,false)[0];fire(w?w.point:rc.ray.at(60,new THREE.Vector3()));
   if(w){
    const m=new THREE.Mesh(new THREE.CircleGeometry(.09,12),new THREE.MeshBasicMaterial({color:0x04070a}));
    const n=w.face.normal.clone().transformDirection(w.object.matrixWorld);
    m.position.copy(w.point).addScaledVector(n,.012);m.lookAt(w.point.clone().add(n));scene.add(m);marks.push(m);
+=======
+  const wHit=rc.intersectObjects(walls,false)[0];
+  fire(wHit?wHit.point:rc.ray.at(60,new THREE.Vector3()));
+  logMiss();
+  if(wHit){
+   const m=new THREE.Mesh(new THREE.CircleGeometry(.09,12),new THREE.MeshBasicMaterial({color:0x04070a}));
+   const n=wHit.face.normal.clone().transformDirection(wHit.object.matrixWorld);
+   m.position.copy(wHit.point).addScaledVector(n,.012);m.lookAt(wHit.point.clone().add(n));scene.add(m);marks.push(m);
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
    if(marks.length>40)scene.remove(marks.shift());
   }
  }
@@ -573,8 +1025,13 @@ function shoot(){
 
 // Atualiza texto de ajuda
 if(isMobile){
+<<<<<<< HEAD
   $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE para atirar (segure no Tracking) · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador.';
   $('sub').textContent='Treino de mira em 3D. Arraste a tela para mirar e use o botão FIRE.';
+=======
+  $('note').textContent='Mobile: Arraste a tela para mirar · Botão FIRE atira (segure para rajada no fuzil e na submetralhadora) · 🔭 liga a luneta da sniper · Botões ◀ ▶ andam nos modos ADAD · Botão ❚❚ pausa. O melhor resultado de cada modo fica salvo neste navegador. Dispersão de balas idêntica ao Valorant.';
+  $('sub').textContent='Treino de mira em 3D. Arraste a tela para mirar e use o botão FIRE. Dispersão Valorant ativa.';
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
 }
 
 // loop
@@ -582,10 +1039,30 @@ let last=performance.now();
 function loop(now){
  requestAnimationFrame(loop);
  const dt=Math.min((now-last)/1000,.05);last=now;G.cd-=dt;
+<<<<<<< HEAD
  cam.rotation.set(pitch,yaw,0,'YXZ');
  const play=locked&&G.state=='play';
  if(play){
   if(isFinite(G.t)) G.t-=dt;
+=======
+ updateBloom(dt); // recupera bloom de spray
+ const play=locked&&G.state=='play';
+ if(play&&isAd())movePlayer(dt);
+ cam.position.set(PP.x,1.7,PP.z);
+ cam.rotation.set(pitch,yaw,0,'YXZ');
+ // zoom da luneta (sniper)
+ const tf=(scoped&&W.scope&&play)?SCOPEFOV:BASEFOV;
+ if(Math.abs(cam.fov-tf)>.05){cam.fov+=(tf-cam.fov)*Math.min(1,dt*16);cam.updateProjectionMatrix()}
+ const sa=Math.max(0,Math.min(1,(BASEFOV-cam.fov)/(BASEFOV-SCOPEFOV)));
+ $('scope').style.opacity=Math.max(0,(sa-.55)/.45);
+ $('cross').style.opacity=sa>.5?0:1;
+ gun.visible=sa<.5;
+ if(play){
+  if(isFinite(G.t)) G.t-=dt;
+  G.el+=dt;
+  // disparo automático (fuzil e submetralhadora)
+  if(mouseDown&&W.auto&&G.mode!='track'&&G.cd<=0&&GA.rel<0){shoot();G.cd=W.cd}
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
   if(G.mode=='track'){
    const t=targets[0],u=t.userData;u.ch-=dt;
    if(u.ch<=0){u.ch=R(.5,1.4);const a=R(0,6.28),s=R(4,8);u.v.set(Math.cos(a)*s,Math.sin(a)*s*.6,0)}
@@ -593,9 +1070,16 @@ function loop(now){
    if(Math.abs(t.position.x)>9){t.position.x=Math.sign(t.position.x)*9;u.v.x*=-1}
    if(t.position.y<1.3||t.position.y>7.5){t.position.y=Math.max(1.3,Math.min(7.5,t.position.y));u.v.y*=-1}
    G.tot+=dt;rc.setFromCamera(c0,cam);
+<<<<<<< HEAD
    const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;
    if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
    if(on){G.onT+=dt;G.score=Math.round(G.onT*100)}
+=======
+   // tracking também usa spread (mas bem menor porque é contínuo)
+   const on=mouseDown&&GA.rel<0&&rc.intersectObject(t,false).length>0;
+   if(mouseDown&&GA.rel<0&&G.cd<=0){G.cd=W.auto?W.cd:.108;fire(rc.ray.at(40,new THREE.Vector3()));beep(220,.03,'square',.04)}
+   if(on){G.onT+=dt;G.score=Math.round(G.onT*100)}else if(mouseDown&&GA.rel<0)logTrack(t,dt);
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
    t.material.emissiveIntensity=on?1:.3;
   }
   if(isFinite(G.t) && G.t<=0)finish();
@@ -615,6 +1099,7 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+<<<<<<< HEAD
 ```
 
 ### Resumo do suporte mobile:
@@ -627,3 +1112,5 @@ requestAnimationFrame(loop);
 | **Continuar** | Botão Continuar no menu |
 
 O código detecta automaticamente se é mobile e ativa os controles de toque. No desktop continua funcionando normalmente com mouse + pointer lock.
+=======
+>>>>>>> 775a0b68b8eddf800048218741211c9ee3c6b886
